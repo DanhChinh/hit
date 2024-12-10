@@ -1,0 +1,53 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="DOM_profits">
+        <div class="profit_top">
+            <div id="profit2">...</div>
+            <div id="profit5">...</div>
+        </div>
+        <div class="profit_bot">
+            <div id="profit0">...</div>
+            <div id="profit4">...</div>
+            <div id="profit3">...</div>
+            <div id="profit1">...</div>
+        </div>
+    </div>
+    <div class="DOM_chart">
+        <canvas class="chart" id="DOM_gameChart"></canvas>
+        <canvas class="chart" id="DOM_myChart"></canvas>
+    </div>
+    </div>
+    <div class="DOM_remote">
+        <div class="progress-container">
+            <div id="DOM_timer" class="progress-bar" style="width: 1%;"></div>
+        </div>
+        <input class="ip-max" id="DOM_gameMax" type="text" value="1000000000">
+
+        <input class="ip-max" id="DOM_myMax" type="text" value="100000">
+
+        <button id="DOM_isPlay">Start</button>
+        <button id="DOM_isShowProfits">Show</button>
+        <button id="DOM_connectWs" isConnect="true" name="Ws">disconnect Ws</button>
+        <button id="DOM_connectWsIO" isConnect="true" name="WsIO">disconnect WsIO</button>
+    </div>
+    <script src="global_variable.js"></script>
+    <!-- <script src="server_connect.js"></script> -->
+    <script src="draw_chart.js"></script>
+    <script src="remote.js"></script>
+    <script src="skd.js"></script>
+    
+
+</body>
+
+</html>

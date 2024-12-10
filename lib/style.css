@@ -1,0 +1,92 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-align: center;
+    font-family: monospace, serif;
+}
+
+
+
+/*DOM_profits*/
+
+.DOM_profits {
+    width: 70%;
+    background-color: rgb(145, 137, 137);
+    border-bottom: 1px solid black;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+.profit_top,
+.profit_bot {
+    width: 100%;
+    display: flex;
+}
+
+#profit2,
+#profit5 {
+    flex: 50%;
+}
+
+#profit0,
+#profit1,
+#profit3,
+#profit4 {
+    flex: 25%;
+}
+.isresult{
+    color: green;
+    
+}
+.maxprofit{
+    border: 2px solid purple;
+}
+/*DOM_chart*/
+
+.chart {
+    width: 100%;
+    height: 50vh;
+    max-height: 45vh;
+    border: 1px solid rgb(100, 2, 100);
+}
+
+/*DOM_remote*/
+.DOM_remote {
+    width: 100%;
+    background-color: rgb(249, 247, 247);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+
+.progress-container {
+    width: 100%;
+    background-color: #011e3d;
+    /* border-radius: 25px; */
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 5px;
+    background-color: #4caf50;
+    /* Màu xanh */
+    transition: width 0.5s ease;
+}
+
+.ip-max {
+    margin: 3px;
+}
+
+#DOM_isPlay {
+    width: 100px;
+    margin-bottom: 10px;
+    background-color: green;
+
+}
+#DOM_isShowProfits{
+    width: 100px;
+    margin-bottom: 10px;
+}
