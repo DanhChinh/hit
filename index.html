@@ -3,50 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>XTrade company</title>
+    <link rel="icon" type="image/x-icon" href="./src/img/logo.jpg">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="./src/style/style.css">
 </head>
 
 <body>
-    <div class="DOM_profits">
-        <div class="profit_top">
-            <div id="profit2">...</div>
-            <div id="profit5">...</div>
-        </div>
-        <div class="profit_bot">
-            <div id="profit0">...</div>
-            <div id="profit4">...</div>
-            <div id="profit3">...</div>
-            <div id="profit1">...</div>
-        </div>
-    </div>
-    <div class="DOM_chart">
-        <canvas class="chart" id="DOM_gameChart"></canvas>
-        <canvas class="chart" id="DOM_myChart"></canvas>
-    </div>
-    </div>
-    <div class="DOM_remote">
-        <div class="progress-container">
-            <div id="DOM_timer" class="progress-bar" style="width: 1%;"></div>
-        </div>
-        <input class="ip-max" id="DOM_gameMax" type="text" value="1000000000">
+    <div class="header bg-success-subtle">
+        <div class="container">
+            <div class="row">
+                <div class="col-2">
+                    <img id="logo" src="./src/img/logo.jpg" alt="">
+                </div>
+                <div class="col-10">
+                    <nav class="navbar navbar-expand-lg bg-body-tertiary mt-4">
+                        <div class="container-fluid">
+                            <a class="navbar-brand" href="#">Navbar scroll</a>
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false"
+                                aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarScroll">
+                                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
+                                    style="--bs-scroll-height: 100px;">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">Link</a>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            Link
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#">Action</a></li>
+                                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link disabled" aria-disabled="true">Link</a>
+                                    </li>
+                                </ul>
+                                <form class="d-flex" role="search">
+                                    <input class="form-control me-2" type="search" placeholder="Search"
+                                        aria-label="Search">
+                                    <button class="btn btn-outline-success" type="submit">Search</button>
+                                </form>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
 
-        <input class="ip-max" id="DOM_myMax" type="text" value="100000">
+            </div>
 
-        <button id="DOM_isPlay">Start</button>
-        <button id="DOM_isShowProfits">Show</button>
-        <button id="DOM_connectWs" isConnect="true" name="Ws">disconnect Ws</button>
-        <button id="DOM_connectWsIO" isConnect="true" name="WsIO">disconnect WsIO</button>
+
+        </div>
     </div>
-    <script src="global_variable.js"></script>
-    <!-- <script src="server_connect.js"></script> -->
-    <script src="draw_chart.js"></script>
-    <script src="remote.js"></script>
-    <script src="skd.js"></script>
-    
+    <div class="main mt-3 mb-3">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-3 bg-dark ">
+                    <div class="container mt-3 ">
+                        <button type="button" class="btn btn-light mt-3" id="DOM_isShowInput">Show</button>
+                        <button type="button" class="btn btn-success mt-3" id="DOM_isPlay">Start</button>
+                        <br>
+                        <button type="button" class="btn btn-danger mt-3" id="DOM_connectWs">Disconnect Ws</button>
+                        <div class="my_form mt-3">
+                            <div class="input-group flex-nowrap ">
+                                <span class="input-group-text" id="addon-wrapping">OldMax</span>
+                                <input type="text" class="form-control" aria-label="Username"
+                                    aria-describedby="addon-wrapping" id="DOM_gameMax" value="1000000000">
+                            </div>
+                            <div class="input-group flex-nowrap mt-3 ">
+                                <span class="input-group-text" id="addon-wrapping">NexMax</span>
+                                <input type="text" class="form-control" aria-label="Username"
+                                    aria-describedby="addon-wrapping" id="DOM_myMax" value="100000">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-9 p-3">
+                    <p class="text-start">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum modi atque
+                        corrupti quam harum! Ipsa officiis odit ipsam. Natus laboriosam omnis quaerat quos voluptatibus
+                        deserunt repudiandae nobis, odit amet cum.</p>
+                    <canvas class="chart" id="DOM_gameChart"></canvas>
+                    <p class="text-start">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque praesentium
+                        excepturi inventore voluptatibus accusantium impedit vitae provident unde neque distinctio nemo
+                        vero ut quod ad, perspiciatis ratione assumenda fugiat consectetur.</p>
+                    <canvas class="chart" id="DOM_myChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer bg-dark text-white p-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-3">
+                    <h5>Tiêu đề 1</h5>
+                    <p>Lorem ipsum dolor sit amet </p>
+                    <p>consectetur adipisicing elit </p>
+                    <p>Harum ab repudiandae impedit quia </p>
+                    <p>accusantium beatae magn</p>
+                    <p>accusantium beatae magn</p>
+                </div>
+                <div class="col-3">
+                    <h5>Tiêu đề 1</h5>
+                    <p>Lorem ipsum dolor sit amet </p>
+                    <p>consectetur adipisicing elit </p>
+                    <p>Harum ab repudiandae impedit quia </p>
+                    <p>accusantium beatae magn</p>
+                    <p>accusantium beatae magn</p>
+                </div>
+                <div class="col-3">
+                    <h5>Tiêu đề 1</h5>
+                    <p>Lorem ipsum dolor sit amet </p>
+                    <p>consectetur adipisicing elit </p>
+                    <p>Harum ab repudiandae impedit quia </p>
+                    <p>accusantium beatae magn</p>
+                    <p>accusantium beatae magn</p>
+                </div>
+                <div class="col-3">
+                    <h5>Tiêu đề 1</h5>
+                    <p>Lorem ipsum dolor sit amet </p>
+                    <p>consectetur adipisicing elit </p>
+                    <p>Harum ab repudiandae impedit quia </p>
+                    <p>accusantium beatae magn</p>
+                    <p>accusantium beatae magn</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./src/script/variable.js"></script>
+    <script src="./src/script/remote.js"></script>
+    <script src="./src/script/draw_chart.js"></script>
+    <script src="./src/script/main.js"></script>
+
 
 </body>
 

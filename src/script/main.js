@@ -1,24 +1,8 @@
 
-var MESSAGE_WS = {
-    url: "wss://mynygwais.hytsocesk.com/websocket",
-    login: [1, "MiniGame", "", "", { "agentId": "1", "accessToken": "1-03c9e5c59d965ab7397b3027a2ee88b2", "reconnect": false }],
-    info: [6, "MiniGame", "lobbyPlugin", { "cmd": 10001 }],
-    result: counter => ["7", "MiniGame", "1", counter],
-    Hkl: [6, "ShakeDisk", "SD_HoangKimLongPlugin", { "cmd": 1950 }],
-    bet: (b, sid, eid) => ["6","MiniGame","taixiuKCBPlugin",{"cmd":2002,"b":b,"sid":sid,"aid":1,"eid":eid,"sqe":true,"a":false}]
-}
 
 
-//03c9e5c59d965ab7397b3027a2ee88b2
-// [1,"MiniGame","","",{"agentId":"1","accessToken":"1-03c9e5c59d965ab7397b3027a2ee88b2","reconnect":false}]
 
-function sendMessage(b, sid, eid,){
-    console.log(b, sid, eid)
-    let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
-    if (!b || !sid || !eid || !REMOTE.isPlay) {return 0; }
-    socket.send(message);
 
-}
 function socket_connect() {
     socket = new WebSocket(MESSAGE_WS.url);
 
@@ -104,8 +88,10 @@ function socket_connect() {
     };
 
     socket.onclose = function (event) {
-        console.log('Kết nối WebSocket đã đóng.');
         clearInterval(sendInterval);
+        console.log('Kết nối WebSocket đã đóng.');
+        alert('Kết nối WebSocket đã đóng.');
+
     };
 
     socket.onerror = function (error) {
