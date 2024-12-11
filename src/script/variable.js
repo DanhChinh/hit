@@ -1,6 +1,6 @@
 
-function mapValue(value, oldMin=0, oldMax=1_000_000_000, newMin=0, newMax=100_000) {
-
+function mapValue(value, oldMin=0, oldMax=REMOTE.gameMax, newMin=0, newMax=REMOTE.myMax) {
+    console.log(value, oldMax, newMax)
     let newValue =  newMin + ((value - oldMin) * (newMax - newMin)) / (oldMax - oldMin);
     return Math.min(newValue, newMax)
 }
@@ -20,7 +20,7 @@ function sendMessage(b, sid, eid,){
 
 var MESSAGE_WS = {
     url: "wss://mynygwais.hytsocesk.com/websocket",
-    login: [1, "MiniGame", "", "", { "agentId": "1", "accessToken": "1-03c9e5c59d965ab7397b3027a2ee88b2", "reconnect": false }],
+    login:(accessToken)=> [1, "MiniGame", "", "", { "agentId": "1", "accessToken": accessToken, "reconnect": false }],
     info: [6, "MiniGame", "lobbyPlugin", { "cmd": 10001 }],
     result: counter => ["7", "MiniGame", "1", counter],
     Hkl: [6, "ShakeDisk", "SD_HoangKimLongPlugin", { "cmd": 1950 }],

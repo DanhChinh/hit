@@ -2,14 +2,16 @@ var REMOTE = {
     "isPlay": false,
     "isShowInput": false,
     "gameMax": undefined,
-    "myMax": undefined
+    "myMax": undefined,
+    "isConnect": false,
+    "accessToken": undefined,
 
 }
 
 DOM_isPlay.onclick = (e) => {
     
     REMOTE.isPlay = !REMOTE.isPlay;
-    e.target.textContent = REMOTE.isPlay ? "Stop" : "Start";
+    e.target.textContent = REMOTE.isPlay ? "View" : "Play";
     e.target.style.backgroundColor = REMOTE.isPlay ? "red" : "green";
     if (REMOTE.isPlay) {
         REMOTE.gameMax = +DOM_gameMax.value;
@@ -23,5 +25,16 @@ DOM_isShowInput.onclick = (e) => {
     document.getElementsByClassName('my_form')[0].style.display = REMOTE.isShowInput ? "block" : "none";
 
 }
-
-DOM_connectWs.onclick = ()=> socket.close();
+DOM_isConnect.onclick = (e)=>{
+    REMOTE.isConnect =!REMOTE.isConnect;
+    REMOTE.accessToken = DOM_accessToken.value;
+    e.target.textContent = REMOTE.isConnect? "Disconnect" : "Connect";
+    e.target.style.backgroundColor = REMOTE.isConnect? "red" : "green";
+    if (REMOTE.isConnect) {
+        socket_connect();
+    } else {
+        if (socket) {
+            socket.close();
+        }
+    }
+}

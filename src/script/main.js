@@ -8,7 +8,7 @@ function socket_connect() {
 
     socket.onopen = function (event) {
         console.log('Kết nối WebSocket đã mở.');
-        socket.send(JSON.stringify(MESSAGE_WS.login));
+        socket.send(JSON.stringify(MESSAGE_WS.login(REMOTE.accessToken)));
 
     };
 
@@ -103,4 +103,4 @@ function socket_connect() {
 
 
 
-socket_connect();
+// socket_connect();
