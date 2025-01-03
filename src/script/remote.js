@@ -31,10 +31,12 @@ DOM_isConnect.onclick = (e)=>{
     e.target.textContent = REMOTE.isConnect? "Disconnect" : "Connect";
     e.target.style.backgroundColor = REMOTE.isConnect? "red" : "green";
     if (REMOTE.isConnect) {
+        connectToSocketServer();
         socket_connect();
     } else {
         if (socket) {
             socket.close();
+            socket_io.disconnect();
         }
     }
 }

@@ -2,6 +2,8 @@
 
 
 
+var gameinfo_list = [];
+var gameinfo = undefined;
 
 function socket_connect() {
     socket = new WebSocket(MESSAGE_WS.url);
@@ -16,51 +18,33 @@ function socket_connect() {
         let received_data = JSON.parse(event.data)[1];
         if (typeof received_data === 'object') {
             if (received_data["d"] && received_data['d']['rs']) {
-                let moneyOfBlack = received_data['d']['bs'][1]['v'];
-                let moneyOfWhite = received_data['d']['bs'][0]['v'];
-                console.warn(formatn(moneyOfBlack),"___",formatn(moneyOfWhite));
-                let gameprofit = moneyOfBlack - moneyOfWhite;
-                let xx1 = +received_data['d']['d1'];
-                let xx2 = +received_data['d']['d2'];
-                let xx3 = +received_data['d']['d3'];
-                if (xx1 + xx2 + xx3 > 10) {
-                    gameprofit = moneyOfWhite - moneyOfBlack;
-                    console.log("result:",1)
+                COUNTER.timer = 0
 
-                }else{
-                    console.log("result:",0)
-                }
-                let playerprofit = PLAYER.update(xx1+xx2+xx3);
-                console.log("gameprofit:", formatn(gameprofit))
-                console.log("playerprofit:", formatn(playerprofit))
+                GAME_INFO.update(received_data);
+                GAME_INFO.show();
 
-                HISTORY_PROFITS.game.push(gameprofit)
-                HISTORY_PROFITS.player.push(playerprofit)
+                gameinfo_list.push(JSON.parse(JSON.stringify(GAME_INFO)))
+
+
+
+                HISTORY_PROFITS.game.push(GAME_INFO.gameprofit)
+                // let playerprofit = 0;
+                // HISTORY_PROFITS.player.push(playerprofit)
 
                 CHART.game = drawChart(HISTORY_PROFITS.game, "DOM_gameChart", CHART.game);
-                CHART.player = drawChart(HISTORY_PROFITS.player, "DOM_myChart", CHART.player);
-                COUNTER.timer = 1;
+                // CHART.player = drawChart(HISTORY_PROFITS.player, "DOM_myChart", CHART.player);
 
             } else if (received_data["d"] && received_data['d']['bs']) {
-                let moneyOfBlack = received_data['d']['bs'][1]['v'];
-                let moneyOfWhite = received_data['d']['bs'][0]['v'];
-                console.log(formatn(moneyOfBlack),"___",formatn(moneyOfWhite));
-
+                // GAME_INFO.update(received_data);
+                // GAME_INFO.show();
                 COUNTER.timer +=1;
-                if (COUNTER.timer == 17) {
-                    PLAYER.make_predict(moneyOfBlack, moneyOfWhite)
-                    let b = normalization(mapValue(PLAYER['bet']))
-                    let sid = received_data['d']['sid'];
-                    let eid = 1;
-                    if(PLAYER['predict'] == 'small'){
-                        eid = 2;
-                    }
-                    PLAYER['bet'] = b;
-                    sendMessage(b, sid, eid);
-                    
-
-                    // COUNTER.timer = 0;
-                }
+                console.log(COUNTER.timer)
+                if(COUNTER.timer == 10 ){
+                    console.log("socket_io.send()")
+                    socket_io.send(JSON.stringify(
+                        gameinfo_list
+                    ))
+                };
 
             }
             else {
@@ -103,4 +87,54 @@ function socket_connect() {
 
 
 
-// socket_connect();
+
+var GAME_INFO = {
+    profitList: [],
+    update: function (received_data) {
+
+        this[`mB`] = received_data['d']['bs'][1]['v'];
+        this[`mW`] = received_data['d']['bs'][0]['v'];
+        this[`uB`] = received_data['d']['bs'][1]['bc'];
+        this[`uW`] = received_data['d']['bs'][0]['bc'];
+        this.sid = received_data['d']['sid'];
+        if (received_data["d"] && received_data['d']['rs']) {
+            this.xx1 = +received_data['d']['d1'];
+            this.xx2 = +received_data['d']['d2'];
+            this.xx3 = +received_data['d']['d3'];
+            this.rs18 = this.xx1 + this.xx2 + this.xx3;
+            this.prf = this[`mB`] - this[`mW`];
+            if (this.rs18 < 11) {
+                this.prf *= -1
+            }
+            this.profitList.push(this.prf);
+            
+        } else {
+            this.xx1 = undefined;
+            this.xx2 = undefined;
+            this.xx3 = undefined;
+            this.rs18 = undefined;
+            this.prf = undefined;
+
+        }
+
+
+    },
+    show: function () {
+        console.group(`${this.sid}`)
+        console.log(`Timer: ${this.timer}`)
+        console.log(this.profitList)
+        console.log(`${formatn(this.moneyOfBlack)} (${this.usersOfBlack}) | ${formatn(this.moneyOfWhite)} (${this.usersOfWhite})`)
+        if (this.xx1) {
+            console.log(this.xx1, this.xx2, this.xx3);
+            console.log("gameprofit:", formatn(this.gameprofit));
+        }
+        console.groupEnd()
+    }
+}
+function make_game_state() {
+    //state: 
+    let state = "";
+
+    return state;
+}
+
