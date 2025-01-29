@@ -42,6 +42,13 @@ function connectToSocketServer() {
         socket_io.on("connect", () => {
             console.log("Kết nối thành công tới server:", serverUrl);
         });
+        socket_io.on('response', function (data) {
+                    let received_data = JSON.parse(data);
+                    console.log(received_data)
+                    PLAYER.eid = received_data.eid
+                    PLAYER.b = received_data.b
+            
+                });
 
         // Xử lý sự kiện 'connect_error'
         socket_io.on("connect_error", (err) => {

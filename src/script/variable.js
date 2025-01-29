@@ -10,7 +10,7 @@ function normalization(value){
 var formatn = number => numeral(number).format('0,0');
 
 
-function sendMessage(b, sid, eid,){
+function sendMessage(b, sid, eid){
     console.log(b, sid, eid)
     let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
     if (!b || !sid || !eid || !REMOTE.isPlay) {return 0; }
@@ -49,22 +49,14 @@ var sendInterval;
 
 
 var PLAYER = {
-    'predict':undefined,
-    'bet':0,
-    'make_predict': function(moneyOfBig, moneyOfSmall){
-        this['bet'] = Math.abs(moneyOfBig - moneyOfSmall)
-        moneyOfBig < moneyOfSmall ? this['predict']='big' : this['predict']='small';
-
-        console.log(this['predict'], formatn(this['bet']))
-    },
-    'update': function(result){
-        let convertresult = result>10? 'big' : 'small';
-        console.log(this['predict'], convertresult)
-        let reward =  convertresult == this['predict'] ? this['bet'] : -this['bet'];
-        this['bet'] = 0
-        this['predict'] = undefined;
-        return reward;
-
+    'eid':undefined,
+    'b':0,
+    update: function(rs18){
+        if(this.eid == 1 && rs18>10  || this.eid == 2 && rs18<11){
+            this.prd = this.b
+        }else{
+            this.prd = -this.b
+        }
     }
 }
 

@@ -1,10 +1,5 @@
 
 
-
-
-var gameinfo_list = [];
-var gameinfo = undefined;
-
 function socket_connect() {
     socket = new WebSocket(MESSAGE_WS.url);
 
@@ -22,28 +17,24 @@ function socket_connect() {
 
                 GAME_INFO.update(received_data);
                 GAME_INFO.show();
+                PLAYER.update(GAME_INFO.rs18)
+                
+                socket_io.send(JSON.stringify(GAME_INFO));
 
-                gameinfo_list.push(JSON.parse(JSON.stringify(GAME_INFO)))
 
-
-
-                HISTORY_PROFITS.game.push(GAME_INFO.gameprofit)
-                // let playerprofit = 0;
-                // HISTORY_PROFITS.player.push(playerprofit)
+                HISTORY_PROFITS.game.push(GAME_INFO.prf)
+                HISTORY_PROFITS.player.push(PLAYER.prf)
 
                 CHART.game = drawChart(HISTORY_PROFITS.game, "DOM_gameChart", CHART.game);
-                // CHART.player = drawChart(HISTORY_PROFITS.player, "DOM_myChart", CHART.player);
+                CHART.player = drawChart(HISTORY_PROFITS.player, "DOM_myChart", CHART.player);
 
             } else if (received_data["d"] && received_data['d']['bs']) {
-                // GAME_INFO.update(received_data);
+                GAME_INFO.update(received_data);
                 // GAME_INFO.show();
                 COUNTER.timer +=1;
-                console.log(COUNTER.timer)
+                console.log("COUNTER.timer ++")
                 if(COUNTER.timer == 10 ){
-                    console.log("socket_io.send()")
-                    socket_io.send(JSON.stringify(
-                        gameinfo_list
-                    ))
+                    sendMessage(PLAYER.b, GAME_INFO.sid, PLAYER.eid)
                 };
 
             }
@@ -73,7 +64,7 @@ function socket_connect() {
 
     socket.onclose = function (event) {
         clearInterval(sendInterval);
-        console.log('Kết nối WebSocket đã đóng.');
+        // console.log('Kết nối WebSocket đã đóng.');
         alert('Kết nối WebSocket đã đóng.');
 
     };
@@ -89,7 +80,6 @@ function socket_connect() {
 
 
 var GAME_INFO = {
-    profitList: [],
     update: function (received_data) {
 
         this[`mB`] = received_data['d']['bs'][1]['v'];
@@ -102,11 +92,11 @@ var GAME_INFO = {
             this.xx2 = +received_data['d']['d2'];
             this.xx3 = +received_data['d']['d3'];
             this.rs18 = this.xx1 + this.xx2 + this.xx3;
-            this.prf = this[`mB`] - this[`mW`];
-            if (this.rs18 < 11) {
-                this.prf *= -1
+            this.prf = Math.abs(this[`mB`] - this[`mW`]);
+            if ((this.rs18>10 && this.mB > this.mW) || (this.rs18<11 && this.mB < this.mW)){
+                this.prf *= -1;
             }
-            this.profitList.push(this.prf);
+
             
         } else {
             this.xx1 = undefined;
@@ -121,20 +111,12 @@ var GAME_INFO = {
     },
     show: function () {
         console.group(`${this.sid}`)
-        console.log(`Timer: ${this.timer}`)
-        console.log(this.profitList)
-        console.log(`${formatn(this.moneyOfBlack)} (${this.usersOfBlack}) | ${formatn(this.moneyOfWhite)} (${this.usersOfWhite})`)
+        console.log(`${formatn(this.mB)} (${this.uB}) | ${formatn(this.mW)} (${this.uW})`)
         if (this.xx1) {
             console.log(this.xx1, this.xx2, this.xx3);
-            console.log("gameprofit:", formatn(this.gameprofit));
+            console.log("gameprofit:", formatn(this.prf));
         }
         console.groupEnd()
     }
-}
-function make_game_state() {
-    //state: 
-    let state = "";
-
-    return state;
 }
 

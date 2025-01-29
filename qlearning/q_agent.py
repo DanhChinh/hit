@@ -1,38 +1,44 @@
-import json, os
+import json, os, sys
 import random
+from db import *
+def stop():
+    sys.exit()
+
 
 class QLearningAgent:
-    def __init__(self, learning_rate=0.1, discount_factor=0.9, exploration_rate=0.1):
-        self.learning_rate = learning_rate  # Hệ số học
-        self.discount_factor = discount_factor  # Hệ số giảm giá
-        self.exploration_rate = exploration_rate  # Tỉ lệ khám phá
+    def __init__(self):
+        self.learning_rate = 0.1  # Hệ số học
+        self.discount_factor = 0.9  # Hệ số giảm giá
+        self.exploration_rate = 0.1  # Tỉ lệ khám phá
         self.load_q_table()
+        self.actions = makeActions()
+
 
     def get_q_value(self, state, action):
         """Lấy giá trị Q của một trạng thái và hành động."""
         return self.q_table.get(state, {}).get(action, 0.0)
 
-    def choose_action(self, state, GAME_INFO):
+    def choose_action(self, state):
         """Chọn hành động dựa trên epsilon-greedy."""
         if state not in self.q_table:
-            actions = makeActions(GAME_INFO)
-            self.q_table[state] = {action: 0.0 for action in actions}  # Tạo trạng thái mới và gán giá trị Q cho tất cả hành đ��ng
-            return random.choice(list(actions))
+            self.q_table[state] = {action: 0.0 for action in self.actions}  # Tạo trạng thái mới và gán giá trị Q cho tất cả hành đ��ng
+            return random.choice(list(self.actions))
         if random.random() < self.exploration_rate:
-            actions = self.q_table[state].keys()
-            return random.choice(list(actions))  # Khám phá
+            return random.choice(list(self.actions))
         else:
             # Khai thác giá trị Q tốt nhất
             # q_values = {action: self.get_q_value(state, action) for action in self.actions}
             # return max(q_values, key=q_values.get)
             best_action = max(self.q_table[state], key=self.q_table[state].get)
             return best_action
-
-    def update_q_value(self, state, action, reward, next_state, GAME_INFO):
+    def play_game(self, state):
+        if state not in self.q_table:
+            return "black_0"
+        return max(self.q_table[state], key=self.q_table[state].get)
+    def update_q_value(self, state, action, reward, next_state):
         """Cập nhật Q-Table theo công thức Q-Learning."""
         if next_state not in self.q_table:
-            actions = makeActions(GAME_INFO)
-            self.q_table[next_state] = {action: 0.0 for action in actions}  # Tạo trạng thái mới và gán giá trị Q cho tất cả hành đ��ng
+            self.q_table[next_state] = {action: 0.0 for action in self.actions}  # Tạo trạng thái mới và gán giá trị Q cho tất cả hành đ��ng
         old_value = self.get_q_value(state, action)
         next_max = max(self.q_table[next_state].values())
         new_value = old_value + self.learning_rate * (reward + self.discount_factor * next_max - old_value)
@@ -54,6 +60,13 @@ class QLearningAgent:
                 self.q_table = json.load(f)
         else:
             self.q_table = {}
+    def train(self):
+
+        pass
+    def test(self):
+        pass
+    def play(self):
+        pass
 
 
 
@@ -62,24 +75,63 @@ class QLearningAgent:
 
 
 
-def makeState(GAME_INFO):
-    #profitList 
-    l = min(len(GAME_INFO['profitList']), 10)
-    profitList10 = GAME_INFO['profitList'][-l:]
-    fixnumber500M = 500000000
-    totalFixed = round(sum(profitList10)/fixnumber500M)*fixnumber500M
-    fixnumber100M = 100000000
-    coefficient_money = round((GAME_INFO['moneyOfBlack'] - GAME_INFO['moneyOfWhite'])/fixnumber100M)* fixnumber100M
-    coefficient_user = round(GAME_INFO['usersOfBlack']/GAME_INFO['usersOfWhite'], 1)
-    #add timeFrame
-    return f"{l}, {int(totalFixed/1000000)} | {int(coefficient_money/1000000)} , {coefficient_user} | "
+def makeState(npdata):
+    def getPercent(A, B):
+        return round(A/B, 1)
+    total_profit = sum(npdata[:,-1])
+    total_profit = round((total_profit/500000000), 1)*5
+    hs_result = npdata[:,-2]
+    hs_result = [i>10 for i in hs_result]
+    lastHs = npdata[-1]
+    result = lastHs[-2]
+    pm = getPercent(lastHs[2], lastHs[3])
+    pu = getPercent(lastHs[4], lastHs[5])
+    return f"{hs_result}|{total_profit}|{pm}|{pu}|{result}"
 
-def makeActions(GAME_INFO):
-    # choices = ['0', '1']
-    choices = ["follow","reverse"]
-    values = [i for i in range(1,10,2)]
+
+def makeActions():
+    choices = ["black","white"]
+    values = [1, 5, 9]
     actions = []
     for c in choices:
         for v in values:
             actions.append(f"{c}_{v}")
     return actions
+def callReward(action, next_state):
+    (choice, value) = action.split('_')
+    value = int(value)
+    result = "white"
+    if next_state[-2]>10:
+        result = "black"
+    if choice == result:
+        return value
+    return -value
+
+
+
+def train(number_epoch = 100):
+    df = readTable()
+    sids = list(df['sid'])
+    Q_bot = QLearningAgent()
+    for e in range(number_epoch):
+        print("Training",e)
+        for index, row in df.iterrows():
+            sid = int(row['sid'])
+            npdata = readHs(sid)
+            npdata_next = readHs(sid+1)
+            if len(npdata)==0 or len(npdata_next)==0:
+                continue
+            state = makeState(npdata)
+            next_state = makeState(npdata_next)
+            action = Q_bot.choose_action(state)
+            reward = callReward(action, npdata_next[-1])
+            # print(action)
+            # print(next_state)
+            # print(reward)
+            Q_bot.update_q_value(state, action, reward, next_state)
+    Q_bot.save_q_table()
+
+
+# train(3000)
+
+Q_bot = QLearningAgent()
