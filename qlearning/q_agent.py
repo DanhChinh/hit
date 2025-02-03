@@ -60,13 +60,6 @@ class QLearningAgent:
                 self.q_table = json.load(f)
         else:
             self.q_table = {}
-    def train(self):
-
-        pass
-    def test(self):
-        pass
-    def play(self):
-        pass
 
 
 
@@ -74,20 +67,30 @@ class QLearningAgent:
 
 
 
-
+# def makeState(npdata):
+#     def getPercent(A, B):
+#         return round(A/B, 1)
+#     print(npdata)
+#     total_profit = sum(npdata[:,-1])
+#     total_profit = round((total_profit/1000000000), 1)*10
+#     hs_result = npdata[:,-2]
+#     hs_result = [i>10 for i in hs_result]
+#     lastHs = npdata[-1]
+#     result = lastHs[-2]
+#     pm = getPercent(lastHs[2], lastHs[3])
+#     pu = getPercent(lastHs[4], lastHs[5])
+#     return f"|{total_profit}|{pm}|{pu}|{result}"
 def makeState(npdata):
-    def getPercent(A, B):
-        return round(A/B, 1)
-    total_profit = sum(npdata[:,-1])
-    total_profit = round((total_profit/500000000), 1)*5
-    hs_result = npdata[:,-2]
-    hs_result = [i>10 for i in hs_result]
-    lastHs = npdata[-1]
-    result = lastHs[-2]
-    pm = getPercent(lastHs[2], lastHs[3])
-    pu = getPercent(lastHs[4], lastHs[5])
-    return f"{hs_result}|{total_profit}|{pm}|{pu}|{result}"
-
+    state = []
+    for row in npdata:
+        pm = int(row[2]) > int(row[3])
+        pu = int(row[4]) > int(row[5])
+        rs = row[-2] > 10
+        state.append(pm)
+        state.append(pu)
+        state.append(rs)
+    return str(state)
+    return f"|{pm}| |{pu}|{result}"
 
 def makeActions():
     choices = ["black","white"]
@@ -125,13 +128,10 @@ def train(number_epoch = 100):
             next_state = makeState(npdata_next)
             action = Q_bot.choose_action(state)
             reward = callReward(action, npdata_next[-1])
-            # print(action)
-            # print(next_state)
-            # print(reward)
             Q_bot.update_q_value(state, action, reward, next_state)
     Q_bot.save_q_table()
 
 
-# train(3000)
 
-Q_bot = QLearningAgent()
+
+#fix state mb-mw

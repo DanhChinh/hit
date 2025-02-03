@@ -9,11 +9,14 @@ function normalization(value){
 }
 var formatn = number => numeral(number).format('0,0');
 
+function randomInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
 function sendMessage(b, sid, eid){
-    console.log(b, sid, eid)
     let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
     if (!b || !sid || !eid || !REMOTE.isPlay) {return 0; }
+    console.log(b, sid, eid)
     socket.send(message);
 
 }
@@ -51,12 +54,15 @@ var sendInterval;
 var PLAYER = {
     'eid':undefined,
     'b':0,
+    'prf':0,
+    "timeBet":10,
     update: function(rs18){
         if(this.eid == 1 && rs18>10  || this.eid == 2 && rs18<11){
-            this.prd = this.b
+            this.prf = this.b
         }else{
-            this.prd = -this.b
+            this.prf = -this.b
         }
+        this.timeBet = randomInteger(3, 22)
     }
 }
 
