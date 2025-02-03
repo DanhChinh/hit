@@ -40,7 +40,7 @@ def handle_message(msg):
     print(prd, value)
     choice = 1 if prd  else 2
 
-    emit('response', json.dumps({"eid": choice,"b": value*50000}))
+    emit('response', json.dumps({"eid": choice,"b": value}))
 
 @socketio.on('connect')
 def handle_connect():

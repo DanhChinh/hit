@@ -46,7 +46,7 @@ function connectToSocketServer() {
                     let received_data = JSON.parse(data);
                     console.log(received_data)
                     PLAYER.eid = received_data.eid
-                    PLAYER.b = received_data.b
+                    PLAYER.b = received_data.b * REMOTE.coefficient
             
                 });
 

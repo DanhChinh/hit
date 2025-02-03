@@ -19,7 +19,7 @@
             <div class="row">
                 <div class="col-2">
                     <img id="logo" src="./src/img/logo.jpg" alt="">
-                </div>                
+                </div>
                 <div class="col-10">
                     <nav class="navbar navbar-expand-lg bg-body-tertiary mt-4">
                         <div class="container-fluid">
@@ -75,39 +75,23 @@
         <div class="container">
 
             <div class="row">
-                <div class="col-3 bg-dark ">
-                    <div class="container mt-3 ">
-                        <button type="button" class="btn btn-light mt-3" id="DOM_isShowInput">Show</button>
-                        <div class="my_form mt-3">
-                            <div class="input-group flex-nowrap ">
-                                <span class="input-group-text" id="addon-wrapping">OldMax</span>
-                                <input type="text" class="form-control" aria-label="Username"
-                                    aria-describedby="addon-wrapping" id="DOM_gameMax" value="1000000000">
-                            </div>
-                            <div class="input-group flex-nowrap mt-3 ">
-                                <span class="input-group-text" id="addon-wrapping">NexMax</span>
-                                <input type="text" class="form-control" aria-label="Username"
-                                    aria-describedby="addon-wrapping" id="DOM_myMax" value="10000">
-                            </div>
-                            <div class="input-group flex-nowrap mt-3 ">
-                                <span class="input-group-text" id="addon-wrapping">Token</span>
-                                <input type="text" class="form-control" aria-label=""
-                                    aria-describedby="addon-wrapping" id="DOM_accessToken" value="1-d11605cad641e28438d451f8199154fe">
-                            </div>
-                            <button type="button" class="btn btn-success mt-3" id="DOM_isPlay">Play</button>
-                            <br>
-                            <button type="button" class="btn btn-success mt-3" id="DOM_isConnect">Connect</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-9 p-3">
-                    <p class="text-start">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum modi atque
-                        corrupti quam harum! Ipsa officiis odit ipsam. Natus laboriosam omnis quaerat quos voluptatibus
-                        deserunt repudiandae nobis, odit amet cum.</p>
+
+                <div class=" p-3">
+
                     <canvas class="chart" id="DOM_gameChart"></canvas>
-                    <p class="text-start">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque praesentium
-                        excepturi inventore voluptatibus accusantium impedit vitae provident unde neque distinctio nemo
-                        vero ut quod ad, perspiciatis ratione assumenda fugiat consectetur.</p>
+                    <button type="button" class="btn btn-light mt-3" id="DOM_isShowInput">Show</button>
+                    <div class="my_form mt-3">
+                        <input type="range" id="slider" min="0" max="50000" value="10000" step="1000">
+                        <p>coefficient: <span id="valueDisplay">10000</span></p>
+                        <div class="input-group flex-nowrap mt-3 ">
+                            <span class="input-group-text" id="addon-wrapping">Token</span>
+                            <input type="text" class="form-control" aria-label="" aria-describedby="addon-wrapping"
+                                id="DOM_accessToken" value="1-d11605cad641e28438d451f8199154fe">
+                        </div>
+                        <button type="button" class="btn btn-success mt-3" id="DOM_isPlay">Play</button>
+                        <br>
+                        <button type="button" class="btn btn-success mt-3" id="DOM_isConnect">Connect</button>
+                    </div>
                     <canvas class="chart" id="DOM_myChart"></canvas>
                 </div>
             </div>

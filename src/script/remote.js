@@ -1,10 +1,9 @@
 var REMOTE = {
     "isPlay": false,
     "isShowInput": false,
-    "gameMax": undefined,
-    "myMax": undefined,
     "isConnect": false,
     "accessToken": undefined,
+    "coefficient": 0
 
 }
 
@@ -14,8 +13,7 @@ DOM_isPlay.onclick = (e) => {
     e.target.textContent = REMOTE.isPlay ? "View" : "Play";
     e.target.style.backgroundColor = REMOTE.isPlay ? "red" : "green";
     if (REMOTE.isPlay) {
-        REMOTE.gameMax = +DOM_gameMax.value;
-        REMOTE.myMax = +DOM_myMax.value;
+        REMOTE.coefficient = slider.value;
     }
 }
 DOM_isShowInput.onclick = (e) => {
@@ -40,3 +38,10 @@ DOM_isConnect.onclick = (e)=>{
         }
     }
 }
+
+const slider = document.getElementById('slider');
+        const valueDisplay = document.getElementById('valueDisplay');
+
+        slider.addEventListener('input', function() {
+            valueDisplay.textContent = slider.value;
+        });
