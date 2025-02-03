@@ -31,7 +31,7 @@ for i in range(10):
 
 
 def predict(record):
-    record = scaler.transform([record]).round(2)[0]
+    record = scaler.transform([record]).round(3)[0]
     print("record", record)
     
     record = np.array(record)

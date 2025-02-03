@@ -19,7 +19,7 @@ def makeDataset():
     columns_to_sort = ['xx1', 'xx2', 'xx3']
     df[columns_to_sort] = np.sort(df[columns_to_sort].values, axis=1)
     df = df.to_numpy()
-    df = scaler.fit_transform(df).round(2)
+    df = scaler.fit_transform(df).round(3)
 
 
     # df = pd.DataFrame(scaler.fit_transform(df).round(2), columns=df.columns)
