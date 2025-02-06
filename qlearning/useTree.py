@@ -1,33 +1,14 @@
-# from sklearn.preprocessing import MinMaxScaler
 import joblib
-# from db import readTable
-import sys
 import numpy as np
 
-def stop():
-    sys.exit()
-# scaler = MinMaxScaler()
-# # Đọc mô hình đã lưu
-
 scaler = joblib.load("scaler.pkl")
-
-
 models = []
-for i in range(10):
+for i in range(9):
     filePath = f"./models/model_{i}.joblib"
     model, _ = joblib.load(filePath)
     model_name = type(model).__name__
     print(f"{filePath} {model_name} {_}")
     models.append(model) 
-
-# df = readTable()
-# df.drop(columns=['id', 'sid'], inplace=True)
-# df = df.to_numpy()
-# # print(df)
-# scaler.fit(df)
-
-# print(df)
-# stop()
 
 
 def predict(record):
@@ -37,22 +18,19 @@ def predict(record):
     record = np.array(record)
     record[3:6] = np.sort(record[3:6])
 
-    # print("record", record)
-    mB = 0
-    mW = 0
+    F = 0
+    T = 0
     for model in models:
-        prd = model.predict([record])[0]
-        if prd :
-            mB += 1
+        prd = model.predict_proba([record])[0]
+        if prd[0]>0.65:
+            F+=1
+        elif prd[0]<0.35:
+            T+=1
         else:
-            mW += 1
-
-    if mB > mW:
-        return True, mB - mW
-    return False, mW - mB
-
-
-
+            pass
+    if T>F:
+        return True, T-F 
+    return False, F-T
 
 record = [430703065,  453526209,  1118,  1327,    6,    3,    4, 13, -43513109]
 prd = predict(record)

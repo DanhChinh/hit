@@ -135,3 +135,9 @@ def train(number_epoch = 100):
 
 
 #fix state mb-mw
+
+
+# from q_agent import *
+
+# number_epoch = int(input("Number of epoch:"))
+# train(number_epoch)

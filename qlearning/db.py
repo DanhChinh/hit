@@ -31,19 +31,14 @@ def addData(sid ,mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf, file_path="database.d
     conn = sqlite3.connect(file_path)
     cursor = conn.cursor()
     cursor.execute("INSERT INTO rounds (sid, mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (sid, mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf))
-    conn.commit()  # Lưu thay đổi
+    conn.commit() 
     conn.close()
 
-def readTable(file_path="database.db"):
+def readTable(file_path="database.db"): #limit 1500
     conn = sqlite3.connect(file_path)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM rounds")
-    # rows = cursor.fetchall()  # Lấy tất cả dữ liệu
-    # for row in rows:
-    #     print(row)
-    # conn.close()
-    #
-    df = pd.read_sql("SELECT * FROM rounds", conn)
+    df = pd.read_sql("SELECT * FROM rounds ORDER BY id DESC LIMIT 1500", conn)
     conn.close()
     return df 
 def readHs(sid, file_path="database.db"):
@@ -53,7 +48,6 @@ def readHs(sid, file_path="database.db"):
     cursor.execute("SELECT * FROM rounds WHERE sid BETWEEN? AND?", (sid-number, sid))#5
     rows = cursor.fetchall()
     conn.close()
-    # print(np.array(rows))
     if len(rows)!= number+1:#6
         return []
     
