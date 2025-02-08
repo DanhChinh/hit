@@ -38,7 +38,8 @@ def readTable(file_path="database.db"): #limit 1500
     conn = sqlite3.connect(file_path)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM rounds")
-    df = pd.read_sql("SELECT * FROM rounds ORDER BY id DESC LIMIT 1500", conn)
+    # df = pd.read_sql("SELECT * FROM rounds ORDER BY id DESC LIMIT 1500", conn)
+    df = pd.read_sql("SELECT * FROM rounds", conn)
     conn.close()
     return df 
 def readHs(sid, file_path="database.db"):
