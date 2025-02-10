@@ -22,14 +22,11 @@ def handle_message(msg):
     addData(hs_arr)
     record = hs_arr[1:]
     xy_test.addData(record)
-    if len(xy_test.x)<=5:
+    if len(xy_test.x)<=2:
         print(f"{len(xy_test.x)}/5")
         emit('response', json.dumps({"eid": 1,"b": 0}))
     else:
         x_test, y_test, x_prd = xy_test.makeXYtest()
-        print(x_test)
-        print(y_test)
-        print(x_prd)
         getBestDatatrain(x_test, y_test)
         eid, b = predict(x_prd)
         print(eid, b)

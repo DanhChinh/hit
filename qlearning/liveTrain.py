@@ -59,7 +59,7 @@ class BOT:
             if accuracy> self.maxAccuracy:
                 self.maxAccuracy = accuracy
                 self.bestModel = copy.deepcopy(self.model)
-                print(f"model: {self.id} -> accuracy: {self.maxAccuracy}")
+                # print(f"model: {self.id} -> accuracy: {self.maxAccuracy}")
     def predict(self, x):
         return int(self.bestModel.predict(x)[0])
 
@@ -71,13 +71,13 @@ def predict(x_prd):
     score_ar = [0,0]
     for bot in botGroup:
         prd = bot.predict(x_prd)
-        # print(f"bot:{bot.id} accuracy:{bot.maxAccuracy}, prd:{prd}")
+        print(f"bot:{bot.id} accuracy:{bot.maxAccuracy}, prd:{prd}")
         score_ar[prd] += bot.maxAccuracy
     if score_ar[1]> score_ar[0]:
-        return 1, int((score_ar[1]/sum(score_ar))*100)
-    return 2, int((score_ar[0]/sum(score_ar))*100)
+        return 1, int((score_ar[1]/sum(score_ar))*100)-50
+    return 2, int((score_ar[0]/sum(score_ar))*100)-50
     return score
-def last30(arr, number = 5):
+def last30(arr, number = 10):
     if len(arr) > number:
         return arr[-number:]
     return arr
