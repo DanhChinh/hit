@@ -50,14 +50,16 @@ class BOT:
         self.maxAccuracy = -1
         self.arrLen = 0
     def getBestDatatrain(self, x_test, y_test):
-        x_train, y_train = getRandomX_train(data, label)
-        self.model.fit(x_train, y_train)
-        y_pred = self.model.predict(x_test)
-        accuracy = accuracy_score(y_test, y_pred)
-        if accuracy> self.maxAccuracy:
-            self.maxAccuracy = accuracy
-            self.bestModel = copy.deepcopy(self.model)
-            print(f"model: {self.id} -> accuracy: {self.maxAccuracy}")
+        self.maxAccuracy = -1
+        for i in range(5):
+            x_train, y_train = getRandomX_train(data, label)
+            self.model.fit(x_train, y_train)
+            y_pred = self.model.predict(x_test)
+            accuracy = accuracy_score(y_test, y_pred)
+            if accuracy> self.maxAccuracy:
+                self.maxAccuracy = accuracy
+                self.bestModel = copy.deepcopy(self.model)
+                print(f"model: {self.id} -> accuracy: {self.maxAccuracy}")
     def predict(self, x):
         return int(self.bestModel.predict(x)[0])
 
