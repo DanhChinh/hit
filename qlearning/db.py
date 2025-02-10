@@ -27,7 +27,8 @@ def createTable(file_path="database.db"):
     """)
     conn.commit()
     conn.close()
-def addData(sid ,mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf, file_path="database.db"):
+def addData(arr, file_path="database.db"):
+    [sid ,mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf] = arr
     conn = sqlite3.connect(file_path)
     cursor = conn.cursor()
     cursor.execute("INSERT INTO rounds (sid, mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (sid, mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf))

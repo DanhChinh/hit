@@ -20,6 +20,7 @@ function socket_connect() {
                 PLAYER.update(GAME_INFO.rs18)
                 
                 socket_io.send(JSON.stringify(GAME_INFO));
+                console.log(JSON.stringify(GAME_INFO))
 
 
                 HISTORY_PROFITS.game.push(GAME_INFO.prf)

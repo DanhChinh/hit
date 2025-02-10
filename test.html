@@ -1,0 +1,34 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+</head>
+
+<body>
+    <button id="btn">
+        send
+    </button>
+
+    <script>
+        function getRandomIntInRange(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        const serverUrl = "http://localhost:5000";
+        socket_io = io(serverUrl, {
+            timeout: 5000, // Thời gian chờ kết nối (ms)
+            reconnection: true // Không tự động kết nối lại
+        });
+        var obj = ()=> {
+            return { "mB": 262960435, "mW": 456497018, "uB": 402, "uW": 1000, "sid": 1840861, "xx1": 1, "xx2": 4, "xx3": 3, "rs18": getRandomIntInRange(3,18), "prf": -193536583 }
+        }
+        btn.onclick = () => {
+            socket_io.send(JSON.stringify(obj()))
+        }
+    </script>
+</body>
+
+</html>
