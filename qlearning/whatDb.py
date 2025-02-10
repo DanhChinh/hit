@@ -12,7 +12,5 @@ def load_q_table(file_path = 'q_table.json'):
 q_table = load_q_table()
 
 print("len of state:", len(q_table))
-
-db = readTable()
-
-print(db)
+df = readTable()
+print(df)

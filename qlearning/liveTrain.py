@@ -25,8 +25,6 @@ def makeDataset():
     label = label.drop(df.index[-1])
     df = df.drop(df.index[-1])
     df.drop(columns=['id', 'sid'], inplace=True)
-    columns_to_sort = ['xx1', 'xx2', 'xx3']
-    df[columns_to_sort] = np.sort(df[columns_to_sort].values, axis=1)
     data = df.to_numpy()
     data = scaler.fit_transform(df).round(3)
     return data, label.to_numpy()
@@ -49,19 +47,52 @@ class BOT:
         self.model = model
         self.bestModel = None
         self.maxAccuracy = 0
-    def getBestDatatrain(self, x_test, y_test):
-        x_train, y_train = getRandomX_train(data, label)
-        self.model.fit(x_train, y_train)
-        y_pred = self.model.predict(x_test)
-        accuracy = accuracy_score(y_test, y_pred)
-        if accuracy> self.maxAccuracy:
-            self.maxAccuracy = accuracy
-            self.bestModel = copy.deepcopy(self.model)
-            print(self.id, self.maxAccuracy)
+    def getBestDatatrain(self, x_test, y_test, esp=1):
+        for i in range(esp):
+            x_train, y_train = getRandomX_train(data, label)
+            self.model.fit(x_train, y_train)
+            y_pred = self.model.predict(x_test)
+            accuracy = accuracy_score(y_test, y_pred)
+            if accuracy> self.maxAccuracy:
+                self.maxAccuracy = accuracy
+                self.bestModel = copy.deepcopy(self.model)
+                print(self.id, self.maxAccuracy)
     def predict(self, x):
         return self.bestModel.predict([x])[0]
 
 
+def getBestDatatrain(x_test, y_test):
+    for bot in botGroup:
+        bot.getBestDatatrain(x_test, y_test)
+def predict(x_prd):
+    for bot in botGroup:
+        prd = bot.predict([x_prd])
+        print(prd)
+    return 1
+def last30(arr):
+    if len(arr) > 30:
+        return arr[-30:]
+    return arr
+class XY_TEST:
+    def __init__(self):
+        self.x = []
+        self.y = []
+    def addData(self, record):
+        self.x.append(record)
+        self.y.append(record[-2]>10)
+    def makeXYtest(self):
+        x_scaler = scaler.transform(self.x)
+        x_prd = np.array(x_scaler)[-1:]
+        x_test = np.array(x_scaler)[:-1]
+        y_test = np.array(y)[1:]
+        return last30(x_test), last30(y_test), x_prd
+        
+
+
+############################
+data, label = makeDataset()
+print(data)
+print(label)
 
 bot1 = BOT(1, RandomForestClassifier())
 bot2 = BOT(2, RandomForestClassifier())
@@ -73,37 +104,6 @@ bot7 = BOT(7, XGBClassifier())
 bot8 = BOT(8, XGBClassifier())
 bot9 = BOT(9, XGBClassifier())
 botGroup = [bot1, bot2, bot3, bot4, bot5, bot6, bot7, bot8, bot9]
-data, label = makeDataset()
-
-
-
-def getBestDatatrain(x_test, y_test):
-    for bot in botGroup:
-        bot.getBestDatatrain(x_test, y_test)
-def predict(record):
-    record = scaler.transform([record]).round(3)[0]
-    print("record", record)
-    record = np.array(record)
-    record[3:6] = np.sort(record[3:6])
-    for bot in botGroup:
-        bot.predict(record)
-
-
-class XY_TEST:
-    def __init__(self):
-        self.x = []
-        self.y = []
-    def addData(self, record):
-        self.x.append(record)
-        self.y.append(record[-2]>10)
-    def makeXYtest(self):
-        x_test
-        #cat phan tu dau tien cua y_test
-        #cat phan tu cuoi cung cua x_test
-        
-
-
-        
 
 
 xy_test = XY_TEST()

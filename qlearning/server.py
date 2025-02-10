@@ -3,7 +3,7 @@ from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import json
 from db import addData
-from trainTree import *
+from liveTrain import *
 
 
 
@@ -15,15 +15,22 @@ socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả ngu�
 
 @socketio.on('message')
 def handle_message(msg):
-    hs = json.loads(msg) 
-    addData(hs["sid"], hs["mB"], hs["mW"], hs["uB"], hs["uW"], hs["xx1"], hs["xx2"], hs["xx3"], hs["rs18"], hs["prf"])
-    record = [hs["mB"], hs["mW"], hs["uB"], hs["uW"], hs["xx1"], hs["xx2"], hs["xx3"], hs["rs18"], hs["prf"]]
+    hs_json = json.loads(msg)
+    #data->db
+    [xx1, xx2, xx3] = sorted([hs_json["xx1"], hs_json["xx2"], hs_json["xx3"]])
+    hs_arr =  [hs_json["sid"], hs_json["mB"], hs_json["mW"], hs_json["uB"], hs_json["uW"], xx1, xx2, xx3, hs_json["rs18"], hs_json["prf"]]
+    addData(hs_arr)
+
+    record = hs_arr[1:]
     xy_test.addData(record)
+    x_test, y_test, x_prd = xy_test.makeXYtest()
+    getBestDatatrain(x_test, y_test)
+    prd = predict(x_prd)
 
 
     
 
-    emit('response', json.dumps({"eid": choice,"b": value}))
+    # emit('response', json.dumps({"eid": choice,"b": value}))
 
 @socketio.on('connect')
 def handle_connect():
