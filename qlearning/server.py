@@ -4,6 +4,7 @@ from flask_cors import CORS
 import json
 from db import addData
 from liveTrain import *
+import time
 
 
 
@@ -15,6 +16,8 @@ socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả ngu�
 
 @socketio.on('message')
 def handle_message(msg):
+    print("--->")
+    start_time = time.time()
     hs_json = json.loads(msg)
     [xx1, xx2, xx3] = sorted([hs_json["xx1"], hs_json["xx2"], hs_json["xx3"]])
     hs_arr =  [hs_json["sid"], hs_json["mB"], hs_json["mW"], hs_json["uB"], hs_json["uW"], xx1, xx2, xx3, hs_json["rs18"], hs_json["prf"]]
@@ -31,6 +34,7 @@ def handle_message(msg):
         eid, b = predict(x_prd)
         print(eid, b)
         emit('response', json.dumps({"eid": eid,"b": b}))
+    print(time.time()- start_time, "--->")
 
 @socketio.on('connect')
 def handle_connect():

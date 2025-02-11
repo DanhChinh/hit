@@ -51,8 +51,12 @@ class BOT:
         self.arrLen = 0
     def getBestDatatrain(self, x_test, y_test):
         self.maxAccuracy = -1
-        for i in range(5):
-            x_train, y_train = getRandomX_train(data, label)
+        l = len(data)-1000
+        for i in range(0,l,50):
+            x_train = data[i:i + 1000]
+            y_train = label[i:i + 1000]
+        # for i in range(5):
+        #     x_train, y_train = getRandomX_train(data, label)
             self.model.fit(x_train, y_train)
             y_pred = self.model.predict(x_test)
             accuracy = accuracy_score(y_test, y_pred)
@@ -77,7 +81,7 @@ def predict(x_prd):
         return 1, int((score_ar[1]/sum(score_ar))*100)-50
     return 2, int((score_ar[0]/sum(score_ar))*100)-50
     return score
-def last30(arr, number = 10):
+def last30(arr, number = 30):
     if len(arr) > number:
         return arr[-number:]
     return arr
@@ -111,7 +115,8 @@ bot6 = BOT(6, GaussianNB())
 bot7 = BOT(7, XGBClassifier())
 bot8 = BOT(8, XGBClassifier())
 bot9 = BOT(9, XGBClassifier())
-botGroup = [bot1, bot2, bot3, bot4, bot5, bot6, bot7, bot8, bot9]
+# botGroup = [bot1, bot2, bot3, bot4, bot5, bot6, bot7, bot8, bot9]
+botGroup = [bot1, bot5, bot9]
 
 
 xy_test = XY_TEST()
