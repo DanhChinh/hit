@@ -62,7 +62,7 @@ var PLAYER = {
         }else{
             this.prf = -this.b
         }
-        this.timeBet = randomInteger(3, 22)
+        this.timeBet = randomInteger(0, 5)
     }
 }
 
