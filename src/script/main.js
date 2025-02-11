@@ -34,7 +34,7 @@ function socket_connect() {
                 // GAME_INFO.show();
                 COUNTER.timer +=1;
                 console.log("COUNTER.timer ++")
-                if(COUNTER.timer == PLAYER.timeBet ){
+                if(PLAYER.isPlay ){
                     sendMessage(PLAYER.b, GAME_INFO.sid, PLAYER.eid)
                 };
 

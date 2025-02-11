@@ -18,6 +18,7 @@ function sendMessage(b, sid, eid){
     if (!b || !sid || !eid || !REMOTE.isPlay) {return 0; }
     console.log(b, sid, eid)
     socket.send(message);
+    PLAYER.isPlay = false;
 
 }
 
@@ -56,13 +57,14 @@ var PLAYER = {
     'b':0,
     'prf':0,
     "timeBet":10,
+    "isPlay":false,
     update: function(rs18){
         if(this.eid == 1 && rs18>10  || this.eid == 2 && rs18<11){
             this.prf = this.b
         }else{
             this.prf = -this.b
         }
-        this.timeBet = randomInteger(0, 5)
+        this.timeBet = randomInteger(1, 2)
     }
 }
 
