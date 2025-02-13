@@ -20,7 +20,7 @@ function socket_connect() {
                 PLAYER.update(GAME_INFO.rs18)
                 
                 socket_io.send(JSON.stringify(GAME_INFO));
-                console.log(JSON.stringify(GAME_INFO))
+                // console.log(JSON.stringify(GAME_INFO))
 
 
                 HISTORY_PROFITS.game.push(GAME_INFO.prf)
@@ -34,9 +34,6 @@ function socket_connect() {
                 // GAME_INFO.show();
                 COUNTER.timer +=1;
                 console.log("COUNTER.timer ++")
-                if(PLAYER.isPlay ){
-                    sendMessage(PLAYER.b, GAME_INFO.sid, PLAYER.eid)
-                };
 
             }
             else {
@@ -47,6 +44,7 @@ function socket_connect() {
             if (received_data === true) {
                 socket.send(JSON.stringify(MESSAGE_WS.info));
                 console.log("send MESSAGE_WS.info")
+                showNotification("Kết nối Game thành công!");
                 setTimeout(() => {
 
                     //fix COUNTER.send = 1;

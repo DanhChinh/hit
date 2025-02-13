@@ -40,14 +40,15 @@ function connectToSocketServer() {
 
         // Xử lý sự kiện 'connect'
         socket_io.on("connect", () => {
-            console.log("Kết nối thành công tới server:", serverUrl);
+            console.log("Kết nối thành công tới pyserver", serverUrl);
+            // showNotification("Kết nối thành công tới pyserver")
         });
         socket_io.on('response', function (data) {
                     let received_data = JSON.parse(data);
-                    console.log(received_data)
+                    // console.log(received_data)
                     PLAYER.eid = received_data.eid
-                    PLAYER.b = received_data.b * REMOTE.coefficient;
-                    PLAYER.isPlay = true;
+                    PLAYER.b = received_data.b * document.getElementById('slider').value;
+                    sendMessage(PLAYER.b, GAME_INFO.sid, PLAYER.eid)
             
                 });
 

@@ -2,19 +2,19 @@ var REMOTE = {
     "isPlay": false,
     "isShowInput": false,
     "isConnect": false,
-    "accessToken": undefined,
-    "coefficient": 10000
+    "accessToken": undefined
+    // "coefficient": 10000
 
 }
 
 DOM_isPlay.onclick = (e) => {
-    
+
     REMOTE.isPlay = !REMOTE.isPlay;
     e.target.textContent = REMOTE.isPlay ? "View" : "Play";
     e.target.style.backgroundColor = REMOTE.isPlay ? "red" : "green";
-    if (REMOTE.isPlay) {
-        REMOTE.coefficient = slider.value;
-    }
+    // if (REMOTE.isPlay) {
+    //     REMOTE.coefficient = slider.value;
+    // }
 }
 DOM_isShowInput.onclick = (e) => {
 
@@ -23,11 +23,11 @@ DOM_isShowInput.onclick = (e) => {
     document.getElementsByClassName('my_form')[0].style.display = REMOTE.isShowInput ? "block" : "none";
 
 }
-DOM_isConnect.onclick = (e)=>{
-    REMOTE.isConnect =!REMOTE.isConnect;
+DOM_isConnect.onclick = (e) => {
+    REMOTE.isConnect = !REMOTE.isConnect;
     REMOTE.accessToken = DOM_accessToken.value;
-    e.target.textContent = REMOTE.isConnect? "Disconnect" : "Connect";
-    e.target.style.backgroundColor = REMOTE.isConnect? "red" : "green";
+    e.target.textContent = REMOTE.isConnect ? "Disconnect" : "Connect";
+    e.target.style.backgroundColor = REMOTE.isConnect ? "red" : "green";
     if (REMOTE.isConnect) {
         connectToSocketServer();
         socket_connect();
@@ -40,8 +40,21 @@ DOM_isConnect.onclick = (e)=>{
 }
 
 const slider = document.getElementById('slider');
-        const valueDisplay = document.getElementById('valueDisplay');
+const valueDisplay = document.getElementById('valueDisplay');
 
-        slider.addEventListener('input', function() {
-            valueDisplay.textContent = slider.value;
-        });
+slider.addEventListener('input', function () {
+    valueDisplay.textContent = slider.value;
+});
+
+
+function showNotification(message) {
+    var  notification = document.getElementById('notification');
+    notification.textContent = message;
+    // Hiển thị thông báo
+    notification.classList.add('show');
+
+    // Ẩn thông báo sau 3 giây
+    setTimeout(function () {
+        notification.classList.remove('show');
+    }, 3000);
+}

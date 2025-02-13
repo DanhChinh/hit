@@ -16,13 +16,14 @@ socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả ngu�
 
 @socketio.on('message')
 def handle_message(msg):
-    print("--->")
     start_time = time.time()
     hs_json = json.loads(msg)
+    print()
+    print(hs_json["sid"], end = "  ")
     [xx1, xx2, xx3] = sorted([hs_json["xx1"], hs_json["xx2"], hs_json["xx3"]])
     hs_arr =  [hs_json["sid"], hs_json["mB"], hs_json["mW"], hs_json["uB"], hs_json["uW"], xx1, xx2, xx3, hs_json["rs18"], hs_json["prf"]]
 
-    addData(hs_arr)
+    # addData(hs_arr)
     record = hs_arr[1:]
     xy_test.addData(record)
     if len(xy_test.x)<=2:
@@ -32,13 +33,13 @@ def handle_message(msg):
         x_test, y_test, x_prd = xy_test.makeXYtest()
         getBestDatatrain(x_test, y_test)
         eid, b = predict(x_prd)
-        print(eid, b)
+        print(f"{b}->{eid}", end = " | ")
         emit('response', json.dumps({"eid": eid,"b": b}))
-    print(time.time()- start_time, "--->")
+    print(f"{int(time.time()- start_time)}s")
+    print()
 
 @socketio.on('connect')
 def handle_connect():
-    # os.system('clear')
     print('Client connected')
 
 @socketio.on('disconnect')

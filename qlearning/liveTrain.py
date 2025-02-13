@@ -51,10 +51,12 @@ class BOT:
         self.arrLen = 0
     def getBestDatatrain(self, x_test, y_test):
         self.maxAccuracy = -1
-        l = len(data)-1000
-        for i in range(0,l,50):
-            x_train = data[i:i + 1000]
-            y_train = label[i:i + 1000]
+        lenOfTrain = 750
+        step = 50
+        l = len(data)-lenOfTrain
+        for i in range(0,l,step):
+            x_train = data[i:i + lenOfTrain]
+            y_train = label[i:i + lenOfTrain]
         # for i in range(5):
         #     x_train, y_train = getRandomX_train(data, label)
             self.model.fit(x_train, y_train)
@@ -75,7 +77,7 @@ def predict(x_prd):
     score_ar = [0,0]
     for bot in botGroup:
         prd = bot.predict(x_prd)
-        print(f"bot:{bot.id} accuracy:{bot.maxAccuracy}, prd:{prd}")
+        print(f"{round(bot.maxAccuracy, 1)} {prd} ", end = " | ")
         score_ar[prd] += bot.maxAccuracy
     if score_ar[1]> score_ar[0]:
         return 1, int((score_ar[1]/sum(score_ar))*100)-50
