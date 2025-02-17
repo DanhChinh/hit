@@ -62,7 +62,7 @@ class BOT:
             self.model.fit(x_train, y_train)
             y_pred = self.model.predict(x_test)
             accuracy = accuracy_score(y_test, y_pred)
-            if accuracy> self.maxAccuracy:
+            if accuracy>= self.maxAccuracy:
                 self.maxAccuracy = accuracy
                 self.bestModel = copy.deepcopy(self.model)
                 # print(f"model: {self.id} -> accuracy: {self.maxAccuracy}")
@@ -83,7 +83,7 @@ def predict(x_prd):
         return 1, int((score_ar[1]/sum(score_ar))*100)-50
     return 2, int((score_ar[0]/sum(score_ar))*100)-50
     return score
-def last30(arr, number = 30):
+def last30(arr, number = 15):
     if len(arr) > number:
         return arr[-number:]
     return arr
