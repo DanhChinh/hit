@@ -17,17 +17,19 @@ function socket_connect() {
 
                 GAME_INFO.update(received_data);
                 GAME_INFO.show();
-                PLAYER.update(GAME_INFO.rs18)
+                PLAYER.update(GAME_INFO.rs18);
+                standard.update(GAME_INFO.rs18);
                 
                 socket_io.send(JSON.stringify(GAME_INFO));
-                // console.log(JSON.stringify(GAME_INFO))
 
 
                 HISTORY_PROFITS.game.push(GAME_INFO.prf)
+                HISTORY_PROFITS.standard.push(standard.prf)
                 HISTORY_PROFITS.player.push(PLAYER.prf)
 
-                CHART.game = drawChart(HISTORY_PROFITS.game, "DOM_gameChart", CHART.game);
-                CHART.player = drawChart(HISTORY_PROFITS.player, "DOM_myChart", CHART.player);
+                CHART.game = drawChart_2(HISTORY_PROFITS.game, "DOM_gameChart", CHART.game);
+                CHART.standard = drawChart_1(HISTORY_PROFITS.standard, "DOM_standard", CHART.standard);
+                CHART.player = drawChart_1(HISTORY_PROFITS.player, "DOM_myChart", CHART.player);
 
             } else if (received_data["d"] && received_data['d']['bs']) {
                 GAME_INFO.update(received_data);
@@ -50,7 +52,6 @@ function socket_connect() {
                     //fix COUNTER.send = 1;
                     sendInterval = setInterval(() => {
                         socket.send(JSON.stringify(MESSAGE_WS.result(COUNTER.send)));
-                        // console.log(JSON.stringify(MESSAGE_WS.result(COUNTER.send)))
                         COUNTER.send++;
                     }, 5000)
                 }, 5000)
@@ -63,8 +64,8 @@ function socket_connect() {
 
     socket.onclose = function (event) {
         clearInterval(sendInterval);
-        // console.log('Kết nối WebSocket đã đóng.');
-        alert('Kết nối WebSocket đã đóng.');
+        // alert('Kết nối WebSocket đã đóng.');
+        setTimeout(()=>{        socket_connect()},1000)
 
     };
 

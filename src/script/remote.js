@@ -3,7 +3,6 @@ var REMOTE = {
     "isShowInput": false,
     "isConnect": false,
     "accessToken": undefined
-    // "coefficient": 10000
 
 }
 

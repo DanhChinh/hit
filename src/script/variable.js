@@ -1,17 +1,9 @@
 
-function mapValue(value, oldMin = 0, oldMax = REMOTE.gameMax, newMin = 0, newMax = REMOTE.myMax) {
-    console.log(value, oldMax, newMax)
-    let newValue = newMin + ((value - oldMin) * (newMax - newMin)) / (oldMax - oldMin);
-    return Math.min(newValue, newMax)
-}
+
 function normalization(value) {
     return Math.round(value / 1000) * 1000;
 }
 var formatn = number => numeral(number).format('0,0');
-
-function randomInteger(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 function sendMessage(b, sid, eid){
     console.log(sid, b, eid)
@@ -34,7 +26,8 @@ var MESSAGE_WS = {
 
 var HISTORY_PROFITS = {
     "game": [],
-    "player": []
+    "player": [],
+    "standard": []
 }
 
 var COUNTER = {
@@ -43,9 +36,6 @@ var COUNTER = {
     "timer": 0,
     "isEnd": false
 }
-
-var PROFITS_LIST_2D = []
-var PLAYER_LIST_2D = []
 
 var socket;
 var sendInterval;
@@ -64,7 +54,18 @@ var PLAYER = {
         } else {
             this.prf = -this.b
         }
-        this.timeBet = randomInteger(1, 2)
     }
 }
 
+var standard = {
+    'eid': undefined,
+    'b': 0,
+    'prf': 0,
+    update: function (rs18) {
+        if (this.eid == 1 && rs18 > 10 || this.eid == 2 && rs18 < 11) {
+            this.prf = this.b
+        } else {
+            this.prf = -this.b
+        }
+    }
+}
