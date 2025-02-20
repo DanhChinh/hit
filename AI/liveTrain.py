@@ -108,16 +108,9 @@ data, label = makeDataset()
 print(data)
 print(label)
 
-bot1 = BOT(1, RandomForestClassifier())
-bot2 = BOT(2, RandomForestClassifier())
-bot3 = BOT(3, RandomForestClassifier())
-bot4 = BOT(4, GaussianNB())
+bot1 = BOT(1, RandomForestClassifier(random_state=42))
 bot5 = BOT(5, GaussianNB())
-bot6 = BOT(6, GaussianNB())
-bot7 = BOT(7, XGBClassifier())
-bot8 = BOT(8, XGBClassifier())
-bot9 = BOT(9, XGBClassifier())
-# botGroup = [bot1, bot2, bot3, bot4, bot5, bot6, bot7, bot8, bot9]
+bot9 = BOT(9, XGBClassifier(random_state=42))
 botGroup = [bot1, bot5, bot9]
 
 
