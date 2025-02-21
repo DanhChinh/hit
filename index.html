@@ -16,126 +16,29 @@
 <body>
     <div id="notification" class="hidden">
     </div>
-    <div class="header bg-body-secondary">
-        <div class="container">
-            <div class="row">
-                <div class="col-2">
-                    <img id="logo" src="./src/img/logo.jpg" alt="">
-                </div>
-                <div class="col-10">
-                    <nav class="navbar navbar-expand-lg bg-body-tertiary mt-4">
-                        <div class="container-fluid">
-                            <a class="navbar-brand" href="#">Navbar scroll</a>
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false"
-                                aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-                            <div class="collapse navbar-collapse" id="navbarScroll">
-                                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
-                                    style="--bs-scroll-height: 100px;">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#">Link</a>
-                                    </li>
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            Link
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#">Action</a></li>
-                                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                                            <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link disabled" aria-disabled="true">Link</a>
-                                    </li>
-                                </ul>
-                                <form class="d-flex" role="search">
-                                    <input class="form-control me-2" type="search" placeholder="Search"
-                                        aria-label="Search">
-                                    <button class="btn btn-outline-success" type="submit">Search</button>
-                                </form>
-                            </div>
-                        </div>
-                    </nav>
-                </div>
+    <div class="container">
 
-            </div>
+        <div class="row">
 
+            <div class=" p-3">
 
-        </div>
-    </div>
-    <div class="main mt-3 mb-3">
-        <div class="container">
-
-            <div class="row">
-
-                <div class=" p-3">
-
-                    <canvas class="chart" id="DOM_gameChart"></canvas>
-                    <canvas class="chart" id="DOM_standard"></canvas>
-                    <button type="button" class="btn btn-light mt-3" id="DOM_isShowInput">Show</button>
-                    <div class="my_form mt-3">
-                        <input type="range" id="slider" min="0" max="50000" value="10000" step="1000">
-                        <p>coefficient: <span id="valueDisplay">10000</span></p>
-                        <div class="input-group flex-nowrap mt-3 ">
-                            <span class="input-group-text" id="addon-wrapping">Token</span>
-                            <input type="text" class="form-control" aria-label="" aria-describedby="addon-wrapping"
-                                id="DOM_accessToken" value="1-d11605cad641e28438d451f8199154fe">
-                        </div>
-                        <button type="button" class="btn btn-success mt-3" id="DOM_isPlay">Play</button>
-                        <br>
-                        <button type="button" class="btn btn-success mt-3" id="DOM_isConnect">Connect</button>
+                <canvas class="chart" id="DOM_gameChart"></canvas>
+                <canvas class="chart" id="DOM_standard"></canvas>
+                <button type="button" class="btn btn-light mt-3" id="DOM_isShowInput">Show</button>
+                <div class="my_form mt-3">
+                    <input type="range" id="slider" min="0" max="15000" value="0" step="1000">
+                    <p>coefficient: <span id="valueDisplay">0</span></p>
+                    <div class="input-group flex-nowrap mt-3 ">
+                        <span class="input-group-text" id="addon-wrapping">Token</span>
+                        <input type="text" class="form-control" aria-label="" aria-describedby="addon-wrapping"
+                            id="DOM_accessToken" value="1-d11605cad641e28438d451f8199154fe">
                     </div>
-                    
-                    <canvas class="chart" id="DOM_myChart"></canvas>
+                    <button type="button" class="btn btn-success mt-3" id="DOM_isPlay">Play</button>
+                    <br>
+                    <button type="button" class="btn btn-success mt-3" id="DOM_isConnect">Connect</button>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="footer bg-dark text-white p-3">
-        <div class="container">
-            <div class="row">
-                <div class="col-3">
-                    <h5>Tiêu đề 1</h5>
-                    <p>Lorem ipsum dolor sit amet </p>
-                    <p>consectetur adipisicing elit </p>
-                    <p>Harum ab repudiandae impedit quia </p>
-                    <p>accusantium beatae magn</p>
-                    <p>accusantium beatae magn</p>
-                </div>
-                <div class="col-3">
-                    <h5>Tiêu đề 1</h5>
-                    <p>Lorem ipsum dolor sit amet </p>
-                    <p>consectetur adipisicing elit </p>
-                    <p>Harum ab repudiandae impedit quia </p>
-                    <p>accusantium beatae magn</p>
-                    <p>accusantium beatae magn</p>
-                </div>
-                <div class="col-3">
-                    <h5>Tiêu đề 1</h5>
-                    <p>Lorem ipsum dolor sit amet </p>
-                    <p>consectetur adipisicing elit </p>
-                    <p>Harum ab repudiandae impedit quia </p>
-                    <p>accusantium beatae magn</p>
-                    <p>accusantium beatae magn</p>
-                </div>
-                <div class="col-3">
-                    <h5>Tiêu đề 1</h5>
-                    <p>Lorem ipsum dolor sit amet </p>
-                    <p>consectetur adipisicing elit </p>
-                    <p>Harum ab repudiandae impedit quia </p>
-                    <p>accusantium beatae magn</p>
-                    <p>accusantium beatae magn</p>
-                </div>
+                
+                <canvas class="chart" id="DOM_myChart"></canvas>
             </div>
         </div>
     </div>
