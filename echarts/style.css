@@ -1,0 +1,25 @@
+/* Điều chỉnh vị trí của sidebar */
+.sidebar {
+    position: fixed; /* Gắn cố định */
+    top: 0;
+    left: 0;
+    height: 100%; /* Chiều cao full màn hình */
+    background-color: #f8f9fa; /* Màu nền cho sidebar */
+    padding-top: 20px; /* Khoảng cách từ trên xuống */
+    overflow-y: auto; /* Cho phép cuộn nếu nội dung dài */
+  }
+  
+  /* Căn chỉnh content */
+  .content {
+    margin-left: 16.6667%; /* Đẩy phần content sang phải để tránh bị che khuất */
+    padding: 20px;
+    height: 100vh;
+    overflow-y: auto; /* Cho phép cuộn nếu nội dung dài */
+  }
+  
+  /* Nếu cần điều chỉnh kích thước thêm */
+  .container-fluid {
+    padding-left: 0; /* Loại bỏ khoảng cách từ bên trái */
+    padding-right: 0; /* Loại bỏ khoảng cách từ bên phải */
+  }
+  
