@@ -368,3 +368,6 @@ option = {
 
 option && myChart.setOption(option);
 
+window.addEventListener('resize', function() {
+  chartDom.resize();
+});
