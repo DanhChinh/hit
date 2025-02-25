@@ -1,58 +1,25 @@
 import numpy as np
+import pandas as pd
 import os
 from db import readTable, df_get_hsft
-
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
-
-df = readTable()
-sids =df['sid'] 
-df.drop(columns=['id', 'sid'], inplace=True)
-df_scaler = scaler.fit_transform(df).round(3)
-
-def flatten_transform_df(df):
-    df.drop(columns=['id', 'sid'], inplace=True)
-    df = scaler.transform(df).round(3)
-    return df.flatten()
-def label_df(df):
-    r = df.iloc[0]
-    # m = r['mB']>r['mW']
-    # u = r['uB']>r['uW']
-    # rs = r['rs18']>10
-    # return f"{m}_{u}_{rs}"
-    if r['rs18']>10:
-        return 1
-    return 2
-
-def make_data():
-    data = []
-    label = []
-    for sid in sids:
-        hs, ft = df_get_hsft(sid)
-        if len(hs)!=6 or len(ft)!=1:
-            # print(sid, "not found")
-            continue
-        data.append(flatten_transform_df(hs))
-        label.append(label_df(ft))
-    return np.array(data), np.array(label)
-
-data, label = make_data()
+from models import *
+from dataTransform import *
 
 
-X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2, random_state=42)
-model_1.fit(X_train, y_train)
-prd = model_1.predict_proba([X_test[0]])[0]
-print(f"Model 1 predict: {prd}")
+
+# data, label = make_data()
+
+
+# X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2, random_state=42)
+# model_1.fit(X_train, y_train)
+# prd = model_1.predict_proba([X_test[0]])[0]
+# print(f"Model 1 predict: {prd}")
 
 
 
 
 class QLearningAgent:
     def __init__(self, qtable_file="q_table.csv", learning_rate=0.8, discount_factor=0.95, exploration_rate=1.0, exploration_decay=0.995):
-        # self.env = gym.make(env_name, is_slippery=False)  
-        # self.state_size = self.env.observation_space.n
-        # self.action_size = self.env.action_space.n
-
         self.qtable_file = qtable_file  # Tên file để lưu Q-table
         self.learning_rate = learning_rate
         self.discount_factor = discount_factor
@@ -79,23 +46,32 @@ class QLearningAgent:
         )
 
     def train(self):
-        X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2)
-        for model in models:
-            model.fit(X_train, y_train)
-        l = len(X_test)
+        dt7, dt3, ndt7, ndt3, lb7, lb3 = split_random_data()
+        model_fit(dt7, lb7)
+        for i in range(len(dt3)):
+            state = model_makestate(dt3[i])
+            nextstate = model_makestate(ndt3[i])
+            action = self.choose_action(state)
+            reward 
 
-        for i in range(l):
-            x = X_test[i]
 
 
-            while not done:
-                action = self.choose_action(state)  
-                new_state, reward, done, _, _ = self.env.step(action)  
 
-                self.update_q_table(state, action, reward, new_state)  
-                state = new_state
 
-            self.exploration_rate *= self.exploration_decay
+
+        print(array_part3)
+                    # for i in range(l):
+        #     x = X_test[i]
+
+
+        #     while not done:
+        #         action = self.choose_action(state)  
+        #         new_state, reward, done, _, _ = self.env.step(action)  
+
+        #         self.update_q_table(state, action, reward, new_state)  
+        #         state = new_state
+
+        #     self.exploration_rate *= self.exploration_decay
 
         print("✅ Huấn luyện hoàn tất!")
 
@@ -126,7 +102,8 @@ class QLearningAgent:
 # =======================
 
 # 1️⃣ Khởi tạo bot (tự động kiểm tra file Q-table)
-# agent = QLearningAgent()
+agent = QLearningAgent()
+agent.train(100)
 
 # # 2️⃣ Huấn luyện bot nếu cần
 # agent.train(num_episodes=5000)

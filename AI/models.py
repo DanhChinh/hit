@@ -40,11 +40,11 @@ model4 = LGBMClassifier(
 
 models = [model1, model2, model3, model4]
 
-def fit(data, label):
+def model_fit(data, label):
     for model in models:
         model.fit(data, label)
 
-def predict(data):
+def model_makestate(data):
     predictions = []
     for model in models:
         predictions.append(model.predict_proba(data))
