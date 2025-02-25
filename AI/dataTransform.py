@@ -15,12 +15,12 @@ def label_df(df):
     # return f"{m}_{u}_{rs}"
     if r['rs18']>10:
         return 1
-    return 2
-def split_random_data(array_2d_1=data, array_2d_2=next_data, array_1d=label):
+    return 0
+def split_random_data(array_2d_1, array_2d_2, array_1d):
     n_samples = array_2d_1.shape[0]
 
     # Tạo tập chỉ số ngẫu nhiên
-    random_indices = np.random.choice(n_samples, size=int(0.7 * n_samples), replace=False)
+    random_indices = np.random.choice(n_samples, size=int(0.8 * n_samples), replace=False)
 
     # Tách dữ liệu thành hai phần
     # Phần 1: 70% dữ liệu ngẫu nhiên
@@ -41,25 +41,26 @@ df =  readTable()
 df_scaler = df.drop(columns=['id', 'sid'], inplace=False)
 scaler.fit_transform(df_scaler).round(3)
 
-data = []
-next_data = []
-label = []
-random_indices = []
 
-for sid in df['sid']:
-    state, nextstate, reward = df_get_hsft(sid)
-    if len(state)!=6 or len(nextstate)!=6 or len(reward)!=1:
-        continue 
-    data.append(flatten_transform_df(state))
-    next_data.append(flatten_transform_df(nextstate))
-    label.append(label_df(reward))
-data = np.array(data)
-next_data = np.array(next_data)
-label = np.array(label)
-indexs = [i for i in range(data)]
-
-# print(data)
-# print(next_data)
-# print(label)
-
-print("xong")
+def makeSave():
+    data = []
+    next_data = []
+    label = []
+    for sid in df['sid']:
+        state, nextstate, reward = df_get_hsft(sid)
+        if len(state)!=6 or len(nextstate)!=6 or len(reward)!=1:
+            continue 
+        data.append(flatten_transform_df(state))
+        next_data.append(flatten_transform_df(nextstate))
+        label.append(label_df(reward))
+    data = np.array(data)
+    next_data = np.array(next_data)
+    label = np.array(label)
+    np.savez('data_transform3.npz', data=data, next_data=next_data, label=label)
+    print("luu du lieu moi hoan tat")
+def loadTransform3():
+    loaded_data = np.load('data_transform3.npz')
+    print("tai len du lieu cu hoan tat")
+    return loaded_data['data'], loaded_data['next_data'], loaded_data['label']
+# makeSave()
+data, next_data, label = loadTransform3()

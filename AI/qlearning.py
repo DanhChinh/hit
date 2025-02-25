@@ -15,95 +15,99 @@ from dataTransform import *
 # prd = model_1.predict_proba([X_test[0]])[0]
 # print(f"Model 1 predict: {prd}")
 
-
+def make_action():
+    choice = [1, 0]
+    values = [0,1,2,3,4,5,6,7,8,9]
+    actions = []
+    for c in choice:
+        for v in values:
+            actions.append(f"{c}_{v}")
+    return  actions
 
 
 class QLearningAgent:
-    def __init__(self, qtable_file="q_table.csv", learning_rate=0.8, discount_factor=0.95, exploration_rate=1.0, exploration_decay=0.995):
+    def __init__(self, qtable_file="q_table.csv", alpha=0.1, gamma=0.9, epsilon=0.1):
         self.qtable_file = qtable_file  # Tên file để lưu Q-table
-        self.learning_rate = learning_rate
-        self.discount_factor = discount_factor
-        self.exploration_rate = exploration_rate
-        self.exploration_decay = exploration_decay
+        self.alpha = alpha
+        self.gamma = gamma
+        self.epsilon = epsilon
+        self.actions = make_action()
 
         # 🔹 Nếu file Q-table tồn tại -> Tải dữ liệu từ file
         if os.path.exists(self.qtable_file):
-            self.load_q_table()
+            # self.load_q_table()
+            self.q_table = pd.read_csv(qtable_file, index_col=0)
         else:
-            self.Q_table = np.zeros((0, 20))  # Khởi tạo mặc định
+            self.q_table = pd.DataFrame(0, index=[], columns=self.actions)
+
             print("🔹 Không tìm thấy file Q-table, tạo bảng mới.")
 
     def choose_action(self, state):
-        if np.random.rand() < self.exploration_rate:
-            return self.env.action_space.sample()
-        else:
-            return np.argmax(self.Q_table[state, :])  
+        if state not in self.q_table.index:
+            self.q_table.loc[state] = np.zeros(len(self.actions))  # Thêm state mới
+            return np.random.choice(self.actions)  # Chọn action ngẫu nhiên
+        if np.random.rand() < self.epsilon:
+            return np.random.choice(self.actions)  # Khám phá
+        return self.q_table.loc[state].idxmax()  # Khai thác
 
-    def update_q_table(self, state, action, reward, new_state):
-        best_next_action = np.max(self.Q_table[new_state, :])
-        self.Q_table[state, action] = self.Q_table[state, action] + self.learning_rate * (
-            reward + self.discount_factor * best_next_action - self.Q_table[state, action]
-        )
-
-    def train(self):
-        dt7, dt3, ndt7, ndt3, lb7, lb3 = split_random_data()
-        model_fit(dt7, lb7)
-        for i in range(len(dt3)):
-            state = model_makestate(dt3[i])
-            nextstate = model_makestate(ndt3[i])
-            action = self.choose_action(state)
-            reward 
-
-
-
-
-
-
-        print(array_part3)
-                    # for i in range(l):
-        #     x = X_test[i]
-
-
-        #     while not done:
-        #         action = self.choose_action(state)  
-        #         new_state, reward, done, _, _ = self.env.step(action)  
-
-        #         self.update_q_table(state, action, reward, new_state)  
-        #         state = new_state
-
-        #     self.exploration_rate *= self.exploration_decay
-
+    def update_q_table(self, state, action, reward, next_state):
+        if next_state not in self.q_table.index:
+            self.q_table.loc[next_state] = np.zeros(len(self.actions))
+        old_value = self.q_table.loc[state, action]
+        max_future_value = self.q_table.loc[next_state].max()
+        new_value = old_value + self.alpha * (reward + self.gamma * max_future_value - old_value)
+        self.q_table.loc[state, action] = new_value
+        # return q_table
+    def train(self, eps=1000):
+        for _ in range(eps):
+            print("esp:",_)
+            dt7, dt3, _, ndt3, lb7, lb3 = split_random_data(data, next_data, label)
+            model_fit(dt7, lb7)
+            state = model_makestate(dt3[0])
+            for i in range(len(dt3)):
+                next_state = model_makestate(ndt3[i])
+                action = self.choose_action(state)
+                [choice, values] = action.split("_")
+                reward = int(values)
+                if int(choice)!= lb3[i]:
+                    reward *= -1
+                # print(state, action, lb3[i],reward, next_state)
+                # return
+                self.update_q_table(state, action, reward, next_state)
+                state = next_state
+            
+        self.q_table.to_csv(self.qtable_file)
         print("✅ Huấn luyện hoàn tất!")
+    def use(self, sid):
+        hs6, _, _ = df_get_hsft(sid)
+        if len(hs6)!=6:
+            return "0_0"
+        hs6 = flatten_transform_df(hs6)
+        for i in range(20):
+            dt7, dt3, _, ndt3, lb7, lb3 = split_random_data(data, next_data, label)
+            model_fit(dt7, lb7)
+            state = model_makestate(hs6)
+            print(i, state)
+            if state in self.q_table:
+                return self.q_table.loc[state].idxmax()
+    # def save_q_table(self):
+    #     df = pd.DataFrame(self.Q_table)
+    #     df.to_csv(self.qtable_file, index=False, header=False)
+    #     print(f"✅ Q-table đã được lưu vào {self.qtable_file}")
 
-    def test(self, max_steps=10):
-        state = self.env.reset()[0]
-        self.env.render()
-
-        for _ in range(max_steps):
-            action = np.argmax(self.Q_table[state, :])  
-            new_state, reward, done, _, _ = self.env.step(action)
-            self.env.render()
-            state = new_state
-            if done:
-                break
-
-    def save_q_table(self):
-        df = pd.DataFrame(self.Q_table)
-        df.to_csv(self.qtable_file, index=False, header=False)
-        print(f"✅ Q-table đã được lưu vào {self.qtable_file}")
-
-    def load_q_table(self):
-        df = pd.read_csv(self.qtable_file, header=None)
-        self.Q_table = df.values  
-        print(f"✅ Q-table đã được tải từ {self.qtable_file}")
+    # def load_q_table(self):
+    #     df = pd.read_csv(self.qtable_file, header=None)
+    #     self.Q_table = df.values  
+    #     print(f"✅ Q-table đã được tải từ {self.qtable_file}")
 
 # =======================
 # 🎯 Chạy chương trình
 # =======================
 
-# 1️⃣ Khởi tạo bot (tự động kiểm tra file Q-table)
 agent = QLearningAgent()
-agent.train(100)
+agent.train(10)
+# agent.use(1844676)
+
 
 # # 2️⃣ Huấn luyện bot nếu cần
 # agent.train(num_episodes=5000)

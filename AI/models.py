@@ -1,7 +1,7 @@
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
-from sklearn.svm import SVC
-from lightgbm import LGBMClassifier
+from sklearn.naive_bayes import GaussianNB
+import numpy as np
 
 model1 = RandomForestClassifier(
     n_estimators=200,      # Số lượng cây (tăng lên để có mô hình ổn định)
@@ -22,30 +22,18 @@ model2 = XGBClassifier(
 )
 
 
-model3 = SVC(
-    kernel='rbf',   # Hàm kernel để xử lý dữ liệu phi tuyến tính
-    C=1,            # Điều chỉnh độ phức tạp (C lớn hơn có thể overfit)
-    gamma='scale'   # Điều chỉnh mức ảnh hưởng của điểm dữ liệu
-)
+model3 = GaussianNB()
 
 
-model4 = LGBMClassifier(
-    n_estimators=300,
-    learning_rate=0.05,
-    max_depth=7,
-    num_leaves=31,
-    subsample=0.8,
-    colsample_bytree=0.8
-)
 
-models = [model1, model2, model3, model4]
+models = [model1, model2, model3]
 
 def model_fit(data, label):
     for model in models:
         model.fit(data, label)
 
 def model_makestate(data):
-    predictions = []
-    for model in models:
-        predictions.append(model.predict_proba(data))
-    return predictions
+    pb1 =  np.round(model1.predict_proba([data])[0], 1)
+    pb2 =  np.round(model2.predict_proba([data])[0], 1)
+    pb3 =  np.round(model3.predict_proba([data])[0], 1)
+    return f"{pb1}_{pb2}_{pb3}"
