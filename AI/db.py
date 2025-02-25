@@ -63,4 +63,21 @@ def readLine(sid, file_path="database.db"):
     return row
 
 
+def df_get_hsft(sid_value):
+    conn = sqlite3.connect('database.db')
+    # Truy vấn lấy các dòng có `sid` trong khoảng từ `sid-5` đến `sid`
+    query_hs = f"SELECT * FROM rounds WHERE sid BETWEEN {sid_value - 5} AND {sid_value}"
+    query_ft = f"SELECT * FROM rounds WHERE sid = {sid_value+1}"
+    hs = pd.read_sql(query_hs, conn)
+    ft = pd.read_sql(query_ft, conn)
+    # Đóng kết nối
+    conn.close()
+    return hs, ft
 
+
+# df = readTable()
+# print(df)
+# hs, ft = df_get_hsft(1844676)
+# print(hs)
+# print("---")
+# print(ft)

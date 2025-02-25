@@ -17,6 +17,7 @@ function socket_connect() {
 
                 GAME_INFO.update(received_data);
                 GAME_INFO.show();
+                GAME_INFO_ARR.push(JSON.parse(JSON.stringify(GAME_INFO)))
                 PLAYER.update(GAME_INFO.rs18);
                 standard.update(GAME_INFO.rs18);
                 
@@ -120,3 +121,4 @@ var GAME_INFO = {
     }
 }
 
+var GAME_INFO_ARR = [];
