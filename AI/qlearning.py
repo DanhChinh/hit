@@ -103,7 +103,7 @@ class QLearningAgent:
 # =======================
 
 agent = QLearningAgent()
-# agent.train(100)
+# agent.train(500)
 # agent.use(1844676)
 
 

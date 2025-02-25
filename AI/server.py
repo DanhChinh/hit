@@ -31,7 +31,7 @@ def handle_message(msg):
     if eid == 0:
         eid = 2
     print(b,"->",eid)
-    time.sleep(15)
+    time.sleep(25)
     emit('response', json.dumps({"eid":eid,"b": b}))
     
 
