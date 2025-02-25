@@ -2,10 +2,10 @@ from flask import Flask
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import json
-from db import addData, df_get_hsft
+from db import addData
 # from liveTrain import *
 import time
-from qlearnig import *
+from qlearning import *
 
 
 

@@ -1,23 +1,17 @@
 import numpy as np
 import pandas as pd
-import os
+import os, time
 from db import readTable, df_get_hsft
 from models import *
 from dataTransform import *
 
 
 
-# data, label = make_data()
 
-
-# X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2, random_state=42)
-# model_1.fit(X_train, y_train)
-# prd = model_1.predict_proba([X_test[0]])[0]
-# print(f"Model 1 predict: {prd}")
 
 def make_action():
     choice = [1, 0]
-    values = [0,1,2,3,4,5,6,7,8,9]
+    values = [1,3,5,7,9]
     actions = []
     for c in choice:
         for v in values:
@@ -63,33 +57,37 @@ class QLearningAgent:
             print("esp:",_)
             dt7, dt3, _, ndt3, lb7, lb3 = split_random_data(data, next_data, label)
             model_fit(dt7, lb7)
-            state = model_makestate(dt3[0])
-            for i in range(len(dt3)):
-                next_state = model_makestate(ndt3[i])
+            pb1s, pb2s, pb3s = model_makestate_all(dt3)
+            npb1s, npb2s, npb3s = model_makestate_all(ndt3)
+            for i in range(len(pb1s)):
+                state = f"{pb1s[i]}_{pb2s[i]}_{pb3s[i]}"
+                next_state = f"{npb1s[i]}_{npb2s[i]}_{npb3s[i]}"
                 action = self.choose_action(state)
                 [choice, values] = action.split("_")
                 reward = int(values)
                 if int(choice)!= lb3[i]:
                     reward *= -1
-                # print(state, action, lb3[i],reward, next_state)
-                # return
                 self.update_q_table(state, action, reward, next_state)
-                state = next_state
             
         self.q_table.to_csv(self.qtable_file)
         print("✅ Huấn luyện hoàn tất!")
     def use(self, sid):
+        start_time = time.time()
         hs6, _, _ = df_get_hsft(sid)
         if len(hs6)!=6:
             return "0_0"
         hs6 = flatten_transform_df(hs6)
-        for i in range(20):
+        while True:
             dt7, dt3, _, ndt3, lb7, lb3 = split_random_data(data, next_data, label)
             model_fit(dt7, lb7)
             state = model_makestate(hs6)
-            print(i, state)
-            if state in self.q_table:
+            print(state)
+            if state in self.q_table.index:
+                # print(self.q_table.loc[state].idxmax())
                 return self.q_table.loc[state].idxmax()
+            if time.time()- start_time>30:
+                print("over time")
+                return "0_0"
     # def save_q_table(self):
     #     df = pd.DataFrame(self.Q_table)
     #     df.to_csv(self.qtable_file, index=False, header=False)
@@ -105,7 +103,7 @@ class QLearningAgent:
 # =======================
 
 agent = QLearningAgent()
-agent.train(10)
+# agent.train(100)
 # agent.use(1844676)
 
 

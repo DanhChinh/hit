@@ -37,3 +37,8 @@ def model_makestate(data):
     pb2 =  np.round(model2.predict_proba([data])[0], 1)
     pb3 =  np.round(model3.predict_proba([data])[0], 1)
     return f"{pb1}_{pb2}_{pb3}"
+def model_makestate_all(data):
+    pb1s = np.round(model1.predict_proba(data), 1)
+    pb2s = np.round(model2.predict_proba(data), 1)
+    pb3s = np.round(model3.predict_proba(data), 1)
+    return pb1s, pb2s, pb3s
