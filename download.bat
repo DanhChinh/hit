@@ -1,8 +1,18 @@
 @echo off
+
+:: Tải Python
 echo Download Python...
 curl -o python_installer.exe https://www.python.org/ftp/python/3.13.2/python-3.13.2-amd64.exe
 start /wait python_installer.exe /quiet InstallAllUsers=1 PrependPath=1
-del python_installer.exe 
+del python_installer.exe
+
+:: Kiểm tra nếu cài đặt Python thành công
+python --version
+if %errorlevel% neq 0 (
+    echo Python installation failed.
+    pause
+    exit /b
+)
 
 :: Tải Git từ trang chính thức
 echo Download Git...
@@ -11,15 +21,31 @@ powershell -Command "Invoke-WebRequest -Uri https://github.com/git-for-windows/g
 :: Cài đặt Git
 start /wait Git-installer.exe /SILENT /NORESTART
 
+:: Kiểm tra nếu cài đặt Git thành công
+git --version
+if %errorlevel% neq 0 (
+    echo Git installation failed.
+    pause
+    exit /b
+)
+
 :: Xóa tệp cài đặt sau khi cài đặt xong
-echo Dọn dẹp...
 del Git-installer.exe
-echo clone https://github.com/DanhChinh/hit.git
+
+:: Clone repository
+echo Cloning repository...
 git clone https://github.com/DanhChinh/hit.git
 
-echo pip install -r requirement.txt
+:: Cài đặt các yêu cầu từ requirement.txt
+echo Installing dependencies...
 cd ".\hit\AI"
-pip install -r requirement.txt
+if exist requirement.txt (
+    pip install -r requirement.txt
+) else (
+    echo requirement.txt not found.
+    pause
+    exit /b
+)
 
 echo Done!
 pause
