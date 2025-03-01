@@ -3,10 +3,12 @@ function leftOrRight(GAME_INFO, server_predictions){
     let b2 = 0;
     let imm = GAME_INFO['mB']> GAME_INFO['mW']
     let iuu = GAME_INFO['uB']> GAME_INFO['uW']
-    for(let predict in predictions){
+    console.log(imm, iuu)
+    for(let predict of server_predictions){
         let im = predict[0]
         let iu = predict[1]
         let p = predict[2]
+        // console.log(im, iu, p)
         if (im == imm & iu == iuu){
             if (p){b1+=1}else{b2+=1}
         }
@@ -19,7 +21,7 @@ function leftOrRight(GAME_INFO, server_predictions){
 
                     PLAYER.eid = eid
                     PLAYER.b = b * document.getElementById('slider').value;
-                    sendMessage(b, GAME_INFO.sid, eid)
+                    sendMessage(PLAYER.b, GAME_INFO.sid, PLAYER.eid)
 }
 
 function socket_connect() {
@@ -59,7 +61,7 @@ function socket_connect() {
                 // GAME_INFO.show();
                 COUNTER.timer +=1;
                 console.log("COUNTER.timer ++")
-                if (COUNTER.timer == 20 && server_predictions.lenght >0){
+                if (COUNTER.timer == 20 && server_predictions.length >0){
                     leftOrRight(GAME_INFO, server_predictions)
                 }
 

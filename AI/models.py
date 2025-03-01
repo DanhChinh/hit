@@ -54,8 +54,13 @@ def makePredict(sid):
     predictions = []
     for model in models:
         predictions.append(model.predict(ft)[0])
-    predictions =  le.inverse_transform(predictions)
+    predictions =  le.inverse_transform(predictions).tolist()
+    # print(predictions)
     for i in range(len(predictions)):
         predictions[i] = predictions[i].split("_")
-    return predictions
+    # print(predictions)
+    predictions = (np.array(predictions) == "True")
+    # print(predictions)
+    return predictions.tolist()
 
+# makePredict(1865362)
