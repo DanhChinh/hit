@@ -17,14 +17,15 @@ function connectToSocketServer() {
         });
         socket_io.on('response', function (data) {
                     let received_data = JSON.parse(data);
-                    // console.log(received_data)
+                    console.log(received_data.predictions)
+                    server_predictions = received_data.predictions
                     
-                    standard.eid =  received_data.eid;
-                    standard.b = received_data.b;
+                    // standard.eid =  received_data.eid;
+                    // standard.b = received_data.b;
 
-                    PLAYER.eid = received_data.eid
-                    PLAYER.b = received_data.b * document.getElementById('slider').value;
-                    sendMessage(PLAYER.b, GAME_INFO.sid, PLAYER.eid)
+                    // PLAYER.eid = received_data.eid
+                    // PLAYER.b = received_data.b * document.getElementById('slider').value;
+                    // sendMessage(PLAYER.b, GAME_INFO.sid, PLAYER.eid)
             
                 });
 

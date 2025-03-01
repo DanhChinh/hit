@@ -33,8 +33,7 @@ var HISTORY_PROFITS = {
 var COUNTER = {
     "send": 1,
     "round": 0,
-    "timer": 0,
-    "isEnd": false
+    "timer": 0
 }
 
 var socket;
@@ -69,3 +68,4 @@ var standard = {
         }
     }
 }
+var server_predictions = [];

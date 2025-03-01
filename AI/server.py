@@ -25,21 +25,6 @@ def handle_message(msg):
     emit('response', json.dumps({"predictions":predictions}))
     
 
-
-    # record = hs_arr[1:]
-    # xy_test.addData(record)
-    # if len(xy_test.x)<=2:
-    #     print(f"{len(xy_test.x)}/5")
-    #     emit('response', json.dumps({"eid": 1,"b": 0}))
-    # else:
-    #     x_test, y_test, x_prd = xy_test.makeXYtest()
-    #     getBestDatatrain(x_test, y_test)
-    #     eid, b = predict(x_prd)
-    #     print(f"{b}->{eid}", end = " | ")
-    #     emit('response', json.dumps({"eid": eid,"b": b}))
-    # print(f"{int(time.time()- start_time)}s")
-    # print()
-
 @socketio.on('connect')
 def handle_connect():
     print('Client connected')
