@@ -2,6 +2,16 @@ from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.naive_bayes import GaussianNB
 import numpy as np
+from db import df_get_hsft
+from transform import loadTransform3, flatten_transform_df, label_df 
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+from sklearn.preprocessing import LabelEncoder
+# Khởi tạo LabelEncoder
+le = LabelEncoder()
+
+# Chuyển đổi y thành số nguyên
+
 
 model1 = RandomForestClassifier(
     n_estimators=200,      # Số lượng cây (tăng lên để có mô hình ổn định)
@@ -12,7 +22,6 @@ model1 = RandomForestClassifier(
     random_state=42
 )
 
-
 model2 = XGBClassifier(
     n_estimators=300,    # Số lượng cây (nhiều hơn để tổng quát tốt)
     max_depth=6,         # Giới hạn độ sâu của cây để tránh overfitting
@@ -21,24 +30,29 @@ model2 = XGBClassifier(
     colsample_bytree=0.8 # Chỉ lấy 80% đặc trưng mỗi lần để tránh overfitting
 )
 
-
 model3 = GaussianNB()
-
-
 
 models = [model1, model2, model3]
 
-def model_fit(data, label):
-    for model in models:
-        model.fit(data, label)
 
-def model_makestate(data):
-    pb1 =  np.round(model1.predict_proba([data])[0], 1)
-    pb2 =  np.round(model2.predict_proba([data])[0], 1)
-    pb3 =  np.round(model3.predict_proba([data])[0], 1)
-    return f"{pb1}_{pb2}_{pb3}"
-def model_makestate_all(data):
-    pb1s = np.round(model1.predict_proba(data), 1)
-    pb2s = np.round(model2.predict_proba(data), 1)
-    pb3s = np.round(model3.predict_proba(data), 1)
-    return pb1s, pb2s, pb3s
+data, label = loadTransform3()
+data_transform = scaler.fit_transform(data).round(3)
+label_encoder = le.fit_transform(label)
+
+for model in models:
+    model.fit(data_transform, label_encoder)
+
+
+
+def makePredict(sid):
+    size = 10 
+    hs, _ = df_get_hsft(sid, size)
+    if len(hs)!= size+1:
+        return []
+    ft = flatten_transform_df(hs)
+    ft = scaler.transform([ft]).round(3)
+    predictions = []
+    for model in models:
+        predictions.append(model.predict(ft)[0])
+    return le.inverse_transform(predictions)
+

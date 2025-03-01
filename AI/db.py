@@ -43,46 +43,17 @@ def readTable(file_path="database.db"): #limit 1500
     df = pd.read_sql("SELECT * FROM rounds", conn)
     conn.close()
     return df 
-def readHs(sid, file_path="database.db"):
-    number = 2#6
-    conn = sqlite3.connect(file_path)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM rounds WHERE sid BETWEEN? AND?", (sid-number, sid))#5
-    rows = cursor.fetchall()
-    conn.close()
-    if len(rows)!= number+1:#6
-        return []
-    
-    return np.array(rows)
-def readLine(sid, file_path="database.db"):
-    conn = sqlite3.connect(file_path)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM rounds WHERE sid = ?", (sid,))
-    row = cursor.fetchone()
-    conn.close()
-    return row
 
 
-def df_get_hsft(sid_value):
+
+def df_get_hsft(sid_value, size = 10):
     conn = sqlite3.connect('database.db')
     # Truy vấn lấy các dòng có `sid` trong khoảng từ `sid-5` đến `sid`
-    query_state = f"SELECT * FROM rounds WHERE sid BETWEEN {sid_value - 5} AND {sid_value}"
-    query_nextstate = f"SELECT * FROM rounds WHERE sid BETWEEN {sid_value - 4} AND {sid_value+1}"
+    query_state = f"SELECT * FROM rounds WHERE sid BETWEEN {sid_value - size} AND {sid_value}"
     query_reward = f"SELECT * FROM rounds WHERE sid = {sid_value+1}"
     state = pd.read_sql(query_state, conn)
-    nextstate = pd.read_sql(query_nextstate, conn)
     reward = pd.read_sql(query_reward, conn)
     # Đóng kết nối
     conn.close()
-    return state, nextstate, reward
+    return state, reward
 
-
-# df = readTable()
-# print(df)
-
-# state, nextstate, reward = df_get_hsft(1844676)
-# print(state)
-# print("---")
-# print(nextstate)
-# print("---")
-# print(reward)

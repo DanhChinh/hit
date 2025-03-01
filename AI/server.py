@@ -3,9 +3,7 @@ from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import json
 from db import addData
-# from liveTrain import *
-import time
-from qlearning import *
+from models import makePredict
 
 
 
@@ -17,22 +15,14 @@ socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả ngu�
 
 @socketio.on('message')
 def handle_message(msg):
-    start_time = time.time()
     hs_json = json.loads(msg)
     print(hs_json["sid"], end = "  ")
     [xx1, xx2, xx3] = sorted([hs_json["xx1"], hs_json["xx2"], hs_json["xx3"]])
     hs_arr =  [hs_json["sid"], hs_json["mB"], hs_json["mW"], hs_json["uB"], hs_json["uW"], xx1, xx2, xx3, hs_json["rs18"], hs_json["prf"]]
 
     addData(hs_arr)
-    
-    (eid, b)  = agent.use(hs_json['sid']).split("_")
-    eid = int(eid)
-    b = int(b)
-    if eid == 0:
-        eid = 2
-    print(b,"->",eid)
-    time.sleep(25)
-    emit('response', json.dumps({"eid":eid,"b": b}))
+    predictions = makePredict(hs_json['sid'])
+    emit('response', json.dumps({"predictions":predictions}))
     
 
 
