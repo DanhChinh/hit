@@ -11,7 +11,7 @@ echo Đang clone dự án từ GitHub...
 git clone https://github.com/DanhChinh/hit.git
 
 echo install module
-cd "C:\Users\Administrator\Desktop\hit\AI"
+cd ".\hit\AI"
 pip install -r requirement.txt
 
 echo Tất cả các tác vụ đã hoàn thành!
