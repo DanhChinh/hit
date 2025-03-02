@@ -12,7 +12,7 @@ echo git commit -m "Auto commit: %date% %time%"
 git commit -m "Auto commit: %date% %time%"
 
 echo git push origin main
-git push origin main
+git push origin main --force
 
 echo Done!
 pause
