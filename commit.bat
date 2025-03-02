@@ -1,6 +1,6 @@
 @echo off
 echo git add...
-git add .
+git add . :!AI/__pycache__/
 
 echo git config --global user.email "danhchinh2024@gmail.com"
 git config --global user.email "danhchinh2024@gmail.com"
