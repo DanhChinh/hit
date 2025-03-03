@@ -1,75 +1,40 @@
-import numpy as np
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
-from scipy.signal import argrelextrema
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
-# Hàm tính đạo hàm bậc nhất
-def first_derivative(data):
-    return np.gradient(data)
+# Tạo dữ liệu giả lập cho ví dụ (Chuỗi thời gian hàng tháng)
+np.random.seed(42)
+n = 100  # Số lượng điểm dữ liệu
+data = np.random.randn(n)  # Dữ liệu ngẫu nhiên
+print(data)
+data = pd.Series(data).cumsum()  # Cộng dồn dữ liệu để tạo xu hướng
+print(data)
+# Vẽ đồ thị chuỗi thời gian
+plt.plot(data)
+plt.title('Dữ liệu chuỗi thời gian')
+plt.show()
 
-# Hàm tính đạo hàm bậc hai
-def second_derivative(data):
-    return np.gradient(first_derivative(data))
+# Phân tích ACF và PACF để xác định các tham số p, d, q
+plot_acf(data)
+plot_pacf(data)
+plt.show()
 
-# Hàm tìm cực trị
-def find_extrema(data):
-    # Tìm cực đại
-    maxima_indices = argrelextrema(data, np.greater)[0]
-    maxima_values = data[maxima_indices]
-    
-    # Tìm cực tiểu
-    minima_indices = argrelextrema(data, np.less)[0]
-    minima_values = data[minima_indices]
-    
-    return maxima_indices, maxima_values, minima_indices, minima_values
+# Mô hình ARIMA (p, d, q)
+# Ở đây ta giả sử p=1, d=1, q=1 từ kết quả phân tích ACF và PACF
+model = ARIMA(data, order=(1, 1, 1))
+model_fit = model.fit()
 
-# Hàm tìm điểm uốn
-def find_inflection_points(data):
-    second_deriv = second_derivative(data)
-    inflection_indices = np.where(np.diff(np.sign(second_deriv)))[0]
-    inflection_values = data[inflection_indices]
-    return inflection_indices, inflection_values
+# In ra tóm tắt kết quả mô hình
+print(model_fit.summary())
 
-# Hàm dự đoán giá trị tiếp theo bằng ARIMA
-def predict_future(data, steps=5):
-    model = ARIMA(data, order=(1, 1, 1))  # Tham số (p, d, q) có thể điều chỉnh
-    model_fit = model.fit()
-    predictions = model_fit.forecast(steps=steps)
-    return predictions
+# Dự báo trong 10 bước tiếp theo
+forecast = model_fit.forecast(steps=10)
+print('Dự báo:', forecast)
 
-# Dữ liệu lịch sử (các mảng giá trị tăng giảm)
-historical_data = [
-    np.array([1, 3, 2, 4, 1]),
-    np.array([-2, 0, 3, -1, 2, -3]),
-    np.array([5, 2, 6, 3, 7, 4, 8])
-]
-
-# Huấn luyện mô hình ARIMA trên dữ liệu lịch sử
-def train_arima_model(historical_data):
-    # Kết hợp tất cả dữ liệu lịch sử thành một mảng duy nhất
-    combined_data = np.concatenate(historical_data)
-    
-    # Huấn luyện mô hình ARIMA
-    model = ARIMA(combined_data, order=(1, 1, 1))  # Tham số (p, d, q) có thể điều chỉnh
-    model_fit = model.fit()
-    return model_fit
-
-# Huấn luyện mô hình
-trained_model = train_arima_model(historical_data)
-
-# Dữ liệu đầu vào (phần đầu của mảng mới)
-initial_data = np.array([1, 6, -4, 2])
-
-# Dự đoán các giá trị tiếp theo
-future_predictions = trained_model.forecast(steps=5)
-full_data = np.concatenate((initial_data, future_predictions))
-
-# Tìm cực trị và điểm uốn
-maxima_indices, maxima_values, minima_indices, minima_values = find_extrema(full_data)
-inflection_indices, inflection_values = find_inflection_points(full_data)
-
-# In kết quả
-print("Dữ liệu đầy đủ (bao gồm dự đoán):", full_data)
-print("Cực đại tại các vị trí:", maxima_indices, "với giá trị:", maxima_values)
-print("Cực tiểu tại các vị trí:", minima_indices, "với giá trị:", minima_values)
-print("Điểm uốn tại các vị trí:", inflection_indices, "với giá trị:", inflection_values)
+# Vẽ dự báo
+plt.plot(data, label='Dữ liệu thực tế')
+plt.plot(np.arange(n, n + 10), forecast, label='Dự báo', color='red')
+plt.legend()
+plt.show()
