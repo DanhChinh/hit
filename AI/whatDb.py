@@ -1,6 +1,30 @@
 from db import readTable
-df = readTable()
-print(df)
+
+def unique():
+    import sqlite3
+
+    # Kết nối đến cơ sở dữ liệu SQLite
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Câu truy vấn SQL để xóa các bản ghi trùng lặp
+    # Chỉ giữ lại bản ghi đầu tiên cho mỗi giá trị trong column_name
+    cursor.execute("""
+        DELETE FROM rounds
+        WHERE rowid NOT IN (
+            SELECT MIN(rowid)
+            FROM rounds
+            GROUP BY sid
+        );
+    """)
+
+    # Lưu thay đổi
+    conn.commit()
+
+    # Đóng kết nối
+    conn.close()
+
+    print("Đã xóa các hàng trùng lặp.")
 
 # prfs = df['prf'].to_numpy()
 
@@ -38,3 +62,7 @@ print(df)
 
 # # Hiển thị biểu đồ
 # plt.show()
+df = readTable()
+print(df)
+df = readTable()
+print(df)

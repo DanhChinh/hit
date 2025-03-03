@@ -1,9 +1,10 @@
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.multiclass import OneVsRestClassifier
+from sklearn import tree
+from sklearn.ensemble import HistGradientBoostingClassifier
 
 import numpy as np
 from db import df_get_hsft
@@ -20,10 +21,11 @@ le = LabelEncoder()
 model1 = RandomForestClassifier()
 model2 = XGBClassifier()
 model3 = GaussianNB()
-model4 = LogisticRegression()
 model5 = OneVsRestClassifier(estimator=SVC(gamma='scale'))
+model6 = tree.DecisionTreeClassifier()
+model7 = HistGradientBoostingClassifier(max_iter=100)
 
-models = [model1, model2, model3, model4, model5]
+models = [model1, model2, model3, model5, model6, model7]
 
 
 data, label = loadTransform3()

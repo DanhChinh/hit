@@ -61,9 +61,9 @@ function socket_connect() {
                 // GAME_INFO.show();
                 COUNTER.timer +=1;
                 console.log("COUNTER.timer ++")
-                if (COUNTER.timer == 20 && server_predictions.length >0){
-                    leftOrRight(GAME_INFO, server_predictions)
-                }
+                // if (COUNTER.timer == 20 && server_predictions.length >0){
+                //     leftOrRight(GAME_INFO, server_predictions)
+                // }
 
             }
             else {
