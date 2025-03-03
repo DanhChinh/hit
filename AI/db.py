@@ -2,7 +2,7 @@ import sqlite3
 import threading
 import pandas as pd
 import numpy as np
-
+from datetime import datetime
 
 
 
@@ -31,7 +31,7 @@ def addData(arr, file_path="database.db"):
     [sid ,mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf] = arr
     conn = sqlite3.connect(file_path)
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO rounds (sid, mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (sid, mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf))
+    cursor.execute("INSERT INTO rounds (id, sid, mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (datetime.now().strftime('%Y-%m-%d %H:%M:%S'),sid, mB, mW, uB, uW, xx1, xx2, xx3, rs18, prf))
     conn.commit() 
     conn.close()
 
