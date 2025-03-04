@@ -38,12 +38,12 @@ def addData(arr, file_path="database.db"):
 def readTable(file_path="database.db"): #limit 1500
     conn = sqlite3.connect(file_path)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM rounds")
     # df = pd.read_sql("SELECT * FROM rounds ORDER BY id DESC LIMIT 1500", conn)
+    cursor.execute("SELECT * FROM rounds")
     df = pd.read_sql("SELECT * FROM rounds", conn)
+    df = df.drop_duplicates(subset='sid')
     conn.close()
     return df 
-
 
 
 def df_get_hsft(sid_value, size = 10):
