@@ -15,13 +15,13 @@ DOM_isPlay.onclick = (e) => {
     //     REMOTE.coefficient = slider.value;
     // }
 }
-DOM_isShowInput.onclick = (e) => {
+// DOM_isShowInput.onclick = (e) => {
 
-    REMOTE.isShowInput = !REMOTE.isShowInput;
-    e.target.textContent = REMOTE.isShowInput ? "Hide" : "Show";
-    document.getElementsByClassName('my_form')[0].style.display = REMOTE.isShowInput ? "block" : "none";
+//     REMOTE.isShowInput = !REMOTE.isShowInput;
+//     e.target.textContent = REMOTE.isShowInput ? "Hide" : "Show";
+//     document.getElementsByClassName('my_form')[0].style.display = REMOTE.isShowInput ? "block" : "none";
 
-}
+// }
 DOM_isConnect.onclick = (e) => {
     REMOTE.isConnect = !REMOTE.isConnect;
     REMOTE.accessToken = DOM_accessToken.value;

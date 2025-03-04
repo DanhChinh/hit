@@ -3,21 +3,17 @@ import numpy as np
 from statsmodels.tsa.arima.model import ARIMA
 import matplotlib.pyplot as plt
 
+import random
+
 # Giả sử đây là bộ dữ liệu mẫu, ví dụ về doanh thu hàng tháng trong 12 tháng
-data = [10, 12, 15, 18, -22, 24, 26, 30, 0, 40, -50, 50]
+data = [1,2,1,-1,1,2,-1,1,2,1,-1,1,2,-1,1,2,1,-1,1,2,-1,1,2,1,-1,1,2,-1]
 
 # Chuyển dữ liệu thành một chuỗi thời gian (time series)
-data_series = pd.Series(data).cumsum()
-
-# Vẽ dữ liệu ban đầu
-plt.plot(data_series)
-plt.title('Dữ liệu mẫu')
-plt.show()
+data_series = pd.Series(data)
 
 # Chia dữ liệu thành tập huấn luyện (training) và tập kiểm tra (test)
-train_data = data_series[:-3]  # 9 tháng đầu làm dữ liệu huấn luyện
-test_data = data_series[-3:]   # 3 tháng còn lại làm dữ liệu kiểm tra
-
+train_data = data_series[:-3]
+test_data = data_series[-3:]
 # Huấn luyện mô hình ARIMA
 model = ARIMA(train_data, order=(1, 0, 0))  # Chọn tham số (p=1, d=0, q=0) cho ARIMA
 model_fit = model.fit()

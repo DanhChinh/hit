@@ -8,50 +8,15 @@
 
 
 
-
-/*DOM_chart*/
-
-.chart {
-    width: 100%;
-    height: 50vh;
-    max-height: 45vh;
-    border: 1px solid rgb(100, 2, 100);
+footer{
+    background-color: rgb(58, 57, 57);
+    border-top:1px solid black ;
+    
 }
-
-
-
-/* Đặt kiểu cho thông báo */
-#notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border-radius: 5px;
-    opacity: 0; /* Ban đầu ẩn */
-    visibility: hidden; /* Ban đầu ẩn */
-    transition: opacity 1s ease, visibility 1s ease;
+.my_chart{
+    height: 280px;
+    margin: 0 auto;
 }
-
-/* Khi thông báo xuất hiện */
-#notification.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Thông báo sẽ biến mất sau khi 3 giây */
-@keyframes hideNotification {
-    0% {
-        opacity: 1;
-        visibility: visible;
-    }
-    90% {
-        opacity: 1;
-        visibility: visible;
-    }
-    100% {
-        opacity: 0;
-        visibility: hidden;
-    }
+#chart_investors{
+    height: 350px;
 }

@@ -37,7 +37,6 @@ function socket_connect() {
         let received_data = JSON.parse(event.data)[1];
         if (typeof received_data === 'object') {
             if (received_data["d"] && received_data['d']['rs']) {
-                COUNTER.timer = 0
 
                 GAME_INFO.update(received_data);
                 GAME_INFO.show();
@@ -47,23 +46,13 @@ function socket_connect() {
                 
                 socket_io.send(JSON.stringify(GAME_INFO));
 
-
-                HISTORY_PROFITS.game.push(GAME_INFO.prf)
-                HISTORY_PROFITS.standard.push(standard.prf)
-                HISTORY_PROFITS.player.push(PLAYER.prf)
-
-                CHART.game = drawChart_2(HISTORY_PROFITS.game, "DOM_gameChart", CHART.game);
-                CHART.standard = drawChart_1(HISTORY_PROFITS.standard, "DOM_standard", CHART.standard);
-                CHART.player = drawChart_1(HISTORY_PROFITS.player, "DOM_myChart", CHART.player);
+                chart_market.addItem(GAME_INFO.prf);
+                chart_bot.addItem(standard.prf);
+                chart_investors.addItem(PLAYER.prf);
 
             } else if (received_data["d"] && received_data['d']['bs']) {
                 GAME_INFO.update(received_data);
-                // GAME_INFO.show();
-                COUNTER.timer +=1;
-                console.log("COUNTER.timer ++")
-                // if (COUNTER.timer == 20 && server_predictions.length >0){
-                //     leftOrRight(GAME_INFO, server_predictions)
-                // }
+                console.log("->>>")
 
             }
             else {
@@ -74,7 +63,7 @@ function socket_connect() {
             if (received_data === true) {
                 socket.send(JSON.stringify(MESSAGE_WS.info));
                 console.log("send MESSAGE_WS.info")
-                showNotification("Kết nối Game thành công!");
+                // showNotification("Kết nối Game thành công!");
                 setTimeout(() => {
                     sendInterval = setInterval(() => {
                         socket.send(JSON.stringify(MESSAGE_WS.result(COUNTER.send)));

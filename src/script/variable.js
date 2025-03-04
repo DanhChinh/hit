@@ -8,7 +8,7 @@ var formatn = number => numeral(number).format('0,0');
 function sendMessage(b, sid, eid){
     console.log(sid, b, eid)
     if (!b || !sid || !eid || !REMOTE.isPlay) {return 0; }
-    showNotification(`${sid}: ${b}->${eid}`)
+    // showNotification(`${sid}: ${b}->${eid}`)
     let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
     socket.send(message);
     PLAYER.isPlay = false;
@@ -24,11 +24,7 @@ var MESSAGE_WS = {
 }
 
 
-var HISTORY_PROFITS = {
-    "game": [],
-    "player": [],
-    "standard": []
-}
+
 
 var COUNTER = {
     "send": 1,
