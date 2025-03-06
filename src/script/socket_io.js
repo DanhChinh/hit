@@ -23,7 +23,7 @@ function connectToSocketServer() {
                         if(server_predictions.length >0){
                             leftOrRight(GAME_INFO, server_predictions)
                         }
-                    },45000)
+                    },52000)
                     
                     // standard.eid =  received_data.eid;
                     // standard.b = received_data.b;

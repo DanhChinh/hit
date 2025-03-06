@@ -55,7 +55,7 @@ def label_df(df):
 def handle_data():
     data = []
     label = []
-    size = 10
+    size = 30
     for sid in df['sid']:
         state, reward = df_get_hsft(sid, size)
         if len(state)!= size+1 or len(reward)!=1:

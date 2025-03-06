@@ -38,7 +38,7 @@ for model in models:
 
 
 def makePredict(sid):
-    size = 10 
+    size = 30
     hs, _ = df_get_hsft(sid, size)
     if len(hs)!= size+1:
         return []
