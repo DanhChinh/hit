@@ -3,7 +3,8 @@ from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import json
 from db import addData
-from models import makePredict
+# from models import makePredict
+from newprd import predict
 
 
 
@@ -21,7 +22,8 @@ def handle_message(msg):
     hs_arr =  [hs_json["sid"], hs_json["mB"], hs_json["mW"], hs_json["uB"], hs_json["uW"], xx1, xx2, xx3, hs_json["rs18"], hs_json["prf"]]
 
     addData(hs_arr)
-    predictions = makePredict(hs_json['sid'])
+    # predictions = makePredict(hs_json['sid'])
+    predictions = predict()
     emit('response', json.dumps({"predictions":predictions}))
     
 

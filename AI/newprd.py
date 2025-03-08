@@ -6,6 +6,7 @@ scaler = MinMaxScaler()
 from sklearn.preprocessing import LabelEncoder
 le = LabelEncoder()
 from scipy.stats import linregress
+import time
 def get_correlation(data):
     """
     Tính hệ số tương quan r giữa chỉ số và dữ liệu.
@@ -67,11 +68,13 @@ def findBestModel(data_train, data_test, label_train, label_test):
     return bestModel 
 
 def predict():
+    st_time = time.time()
     data, label, xpredict = makeData()
     data_train, data_test, label_train, label_test = split_data(data, label, 10)
     bestModel = findBestModel(data_train, data_test, label_train, label_test)
-    predict = bestModel.predict([xpredict])
-    print(predict)
+    predict = bestModel.predict(xpredict)
+    print( time.time() - st_time)
+    return le.inverse_transform(predict).tolist()
 
 predict()
 
