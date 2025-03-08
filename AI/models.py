@@ -1,8 +1,5 @@
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.svm import SVC
-from sklearn.multiclass import OneVsRestClassifier
 from sklearn import tree
 from sklearn.ensemble import HistGradientBoostingClassifier
 
@@ -15,18 +12,18 @@ from sklearn.preprocessing import LabelEncoder
 # Khởi tạo LabelEncoder
 le = LabelEncoder()
 
+
 # Chuyển đổi y thành số nguyên
 
 
-model1 = RandomForestClassifier()
-model2 = XGBClassifier()
-model3 = GaussianNB()
-model5 = OneVsRestClassifier(estimator=SVC(gamma='scale'))
-model6 = tree.DecisionTreeClassifier()
-model7 = HistGradientBoostingClassifier(max_iter=100)
+model1 = RandomForestClassifier
+model2 = XGBClassifier
 
-models = [model1, model2, model3, model5, model6, model7]
+model6 = tree.DecisionTreeClassifier
+model7 = HistGradientBoostingClassifier
 
+models = [model1, model2(), model6(), model7()]
+slopes = [-1, -1, -1, -1]
 
 data, label = loadTransform3()
 data_transform = scaler.fit_transform(data).round(3)
@@ -36,9 +33,8 @@ for model in models:
     model.fit(data_transform, label_encoder)
 
 
-
 def makePredict(sid):
-    size = 30
+    size = 10
     hs, _ = df_get_hsft(sid, size)
     if len(hs)!= size+1:
         return []
@@ -56,4 +52,5 @@ def makePredict(sid):
     # print(predictions)
     return predictions.tolist()
 
-# makePredict(1865362)
+result = makePredict(1865362)
+print(result)
