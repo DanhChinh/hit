@@ -50,6 +50,12 @@ function socket_connect() {
                 chart_bot.addItem(standard.prf);
                 chart_investors.addItem(PLAYER.prf);
 
+                setTimeout(()=>{
+                    if(server_predictions.length >0){
+                        leftOrRight(GAME_INFO, server_predictions)
+                    }
+                },57000)
+
             } else if (received_data["d"] && received_data['d']['bs']) {
                 GAME_INFO.update(received_data);
                 console.log("->>>")
