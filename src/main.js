@@ -14,8 +14,14 @@ var MESSAGE_WS = {
     info: ["6", "MiniGame2", "taixiu_live_gateway_plugin", { "cmd": 15000 }],
     result: counter => ["7", "MiniGame2", "1", counter],
     Hkl: [6, "ShakeDisk", "SD_HoangKimLongPlugin", { "cmd": 1950 }],
-    bet: (b, sid, eid) => ["6", "MiniGame2", "taixiuKCBPlugin", { "cmd": 2002, "b": b, "sid": sid, "aid": 1, "eid": eid, "sqe": true, "a": false }]
+    bet: (b, sid, eid) => ["6","MiniGame2","taixiu_live_gateway_plugin",{"cmd":15002,"b":b,"sid":sid,"aid":1,"eid":eid}]
 }
+
+function randomChoice(arr) {
+    const randomIndex = Math.floor(Math.random() * arr.length);
+    return arr[randomIndex];
+}
+
 var counter_send = 0;
 var socket;
 var is_betting = false;
@@ -34,6 +40,13 @@ var record ={
     }
 
 };
+
+var predict = randomChoice([1,2])
+var result_eid = undefined;
+var min_bet = 200;
+var bet = min_bet;
+
+
 function socket_connect() {
     socket = new WebSocket(MESSAGE_WS.url);
 
@@ -72,11 +85,24 @@ function socket_connect() {
                 record.d3 = received_data.d3;
                 console.log(record)
                 is_betting = false;
+
+                result_eid =  (received_data.d1 + received_data.d2+received_data.d3)>10? 1: 2;
+
+                if(result_eid === predict){
+                    bet = min_bet;
+                }else{
+                    bet *=2;
+                }
+                predict = randomChoice([1,2])
             }
             else if (received_data.cmd === 15005) {
                 // console.log("newGame", received_data)
                 record.reset();
                 is_betting = true;
+
+                let messobj = MESSAGE_WS.bet(bet, received_data.sid, predict);
+                console.log(messobj);
+                socket.send(JSON.stringify(messobj))
             }
             else {
                 console.log("other", received_data)
