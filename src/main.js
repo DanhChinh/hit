@@ -72,7 +72,7 @@ function socket_connect() {
             } else if (received_data.cmd === 15007) {
                 if(is_betting){
                     // console.log("betting", received_data)
-                    record.progress.push(received_data.bs)
+                    record.progress.push(JSON.parse(JSON.stringify(received_data.bs)))
 
                 }else{
                     console.log("waiting...")
@@ -83,7 +83,7 @@ function socket_connect() {
                 record.d1 = received_data.d1;
                 record.d2 = received_data.d2;
                 record.d3 = received_data.d3;
-                console.log(record)
+                console.log(JSON.parse(JSON.stringify(record)))
                 is_betting = false;
 
                 result_eid =  (received_data.d1 + received_data.d2+received_data.d3)>10? 1: 2;
