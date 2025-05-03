@@ -21,6 +21,27 @@ function randomChoice(arr) {
     const randomIndex = Math.floor(Math.random() * arr.length);
     return arr[randomIndex];
 }
+function sendDataToThuhuyenFun(record) {
+    if(record.progress.length === 0){return;}
+    let data = new FormData();
+    data.append("sid", record.sid);
+    data.append("progress", JSON.stringify(record.progress));
+    data.append("d1", record.d1);
+    data.append("d2", record.d2);
+    data.append("d3", record.d3);
+    axios.post('https://thuhuyen.fun/xg79/post_data.php', data)
+    .then(response => {
+      if (response.data.success) {
+        console.log('Dữ liệu đã được lưu trữ thành công');
+      } else {
+        console.error('Lỗi: ' + response.data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Lỗi kết nối:', error);
+    });
+  
+}
 
 var counter_send = 0;
 var socket;
@@ -84,6 +105,9 @@ function socket_connect() {
                 record.d2 = received_data.d2;
                 record.d3 = received_data.d3;
                 console.log(JSON.parse(JSON.stringify(record)))
+                sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)))
+
+
                 is_betting = false;
 
                 result_eid =  (received_data.d1 + received_data.d2+received_data.d3)>10? 1: 2;
@@ -102,7 +126,7 @@ function socket_connect() {
 
                 let messobj = MESSAGE_WS.bet(bet, received_data.sid, predict);
                 console.log(messobj);
-                socket.send(JSON.stringify(messobj))
+                // socket.send(JSON.stringify(messobj))
             }
             else {
                 console.log("other", received_data)
