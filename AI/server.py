@@ -1,10 +1,8 @@
 from flask import Flask
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
-import json
-from db import addData
-# from models import makePredict
-from newprd import predict
+import json, time
+
 
 
 
@@ -16,15 +14,11 @@ socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả ngu�
 
 @socketio.on('message')
 def handle_message(msg):
-    hs_json = json.loads(msg)
-    print(hs_json["sid"])
-    [xx1, xx2, xx3] = sorted([hs_json["xx1"], hs_json["xx2"], hs_json["xx3"]])
-    hs_arr =  [hs_json["sid"], hs_json["mB"], hs_json["mW"], hs_json["uB"], hs_json["uW"], xx1, xx2, xx3, hs_json["rs18"], hs_json["prf"]]
-
-    addData(hs_arr)
-    # predictions = makePredict(hs_json['sid'])
-    predictions = predict()
-    emit('response', json.dumps({"predictions":predictions}))
+    print("receive", msg)
+    time.sleep(1)
+    data = {"predictions":1}
+    emit('response', data)
+    print("send", data)
     
 
 @socketio.on('connect')

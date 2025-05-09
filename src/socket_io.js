@@ -6,30 +6,25 @@ function connectToSocketServer() {
     const serverUrl = "http://localhost:5000";
     try {
         socket_io = io(serverUrl, {
-            timeout: 5000, // Thời gian chờ kết nối (ms)
-            reconnection: true // Không tự động kết nối lại
+            timeout: 5000, 
+            reconnection: true 
         });
 
-        // Xử lý sự kiện 'connect'
         socket_io.on("connect", () => {
             console.log("Kết nối thành công tới pyserver", serverUrl);
-            // showNotification("Kết nối thành công tới pyserver")
+            setInterval(()=>{
+                let mgs = {
+                    "time":new Date(),
+                    "data": Math.random()
+                }
+                socket_io.send(mgs)
+                console.log("send:", mgs)
+            }, 15000)
+
         });
-        socket_io.on('response', function (data) {
-                    let received_data = JSON.parse(data);
-                    console.log(received_data.predictions)
-                    server_predictions = received_data.predictions
-                    
-                    // standard.eid =  received_data.eid;
-                    // standard.b = received_data.b;
-
-                    // PLAYER.eid = received_data.eid
-                    // PLAYER.b = received_data.b * document.getElementById('slider').value;
-                    // sendMessage(PLAYER.b, GAME_INFO.sid, PLAYER.eid)
-            
+        socket_io.on('response',  mgs=> {
+            console.log("receive", mgs)
                 });
-
-        // Xử lý sự kiện 'connect_error'
         socket_io.on("connect_error", (err) => {
             console.error("Lỗi kết nối tới server:", err.message);
         });

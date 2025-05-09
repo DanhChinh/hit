@@ -1,43 +1,35 @@
-var REMOTE = {
-    "isPlay": false,
-    "isShowInput": false,
-    "isConnect": false,
-    "accessToken": undefined
-
-}
-
+var isPlay = false;
+var isConnectGame = false;
+var isConnectMyServer = false;
+var accessToken = "";
+var accessTokenStorege = localStorage.getItem("accessToken");
+DOM_accessToken.value = accessTokenStorege;
 DOM_isPlay.onclick = (e) => {
+    isPlay = !isPlay;
+    e.target.textContent = isPlay ? "View" : "Play";
+    e.target.style.backgroundColor = isPlay ? "red" : "green";
 
-    REMOTE.isPlay = !REMOTE.isPlay;
-    e.target.textContent = REMOTE.isPlay ? "View" : "Play";
-    e.target.style.backgroundColor = REMOTE.isPlay ? "red" : "green";
-    // if (REMOTE.isPlay) {
-    //     REMOTE.coefficient = slider.value;
-    // }
 }
-// DOM_isShowInput.onclick = (e) => {
 
-//     REMOTE.isShowInput = !REMOTE.isShowInput;
-//     e.target.textContent = REMOTE.isShowInput ? "Hide" : "Show";
-//     document.getElementsByClassName('my_form')[0].style.display = REMOTE.isShowInput ? "block" : "none";
+DOM_isConnectGame.onclick = (e) => {
 
-// }
-DOM_isConnect.onclick = (e) => {
-    REMOTE.isConnect = !REMOTE.isConnect;
-    REMOTE.accessToken = DOM_accessToken.value;
-    e.target.textContent = REMOTE.isConnect ? "Disconnect" : "Connect";
-    e.target.style.backgroundColor = REMOTE.isConnect ? "red" : "green";
-    if (REMOTE.isConnect) {
-        // connectToSocketServer();
-        socket_connect();
-    } else {
-        if (socket) {
-            socket.close();
-            socket_io.disconnect();
-        }
+    if(DOM_accessToken.value){
+        accessToken = DOM_accessToken.value;
+        localStorage.setItem("accessToken", accessToken);
+    }else{
+        return;
     }
+    isConnectGame = !isConnectGame;
+    e.target.textContent = isConnectGame ? "Disconnect Game" : "Connect Game";
+    e.target.style.backgroundColor = isConnectGame ? "red" : "green";
 }
+DOM_isConnectMyServer.onclick = (e)=>{
+    isConnectMyServer = !isConnectMyServer;
+    e.target.textContent = isConnectMyServer ? "Disconnect My Server" : "Connect My Server";
+    e.target.style.backgroundColor = isConnectMyServer ? "red" : "green";
+    isConnectMyServer ? connectToSocketServer(): socket_io.close();
 
+}
 const slider = document.getElementById('slider');
 const valueDisplay = document.getElementById('valueDisplay');
 
@@ -46,14 +38,3 @@ slider.addEventListener('input', function () {
 });
 
 
-function showNotification(message) {
-    var  notification = document.getElementById('notification');
-    notification.textContent = message;
-    // Hiển thị thông báo
-    notification.classList.add('show');
-
-    // Ẩn thông báo sau 3 giây
-    setTimeout(function () {
-        notification.classList.remove('show');
-    }, 3000);
-}
