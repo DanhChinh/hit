@@ -1,97 +1,125 @@
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>x_project</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/decision-tree@1.0.5/dist/decision-tree.min.js"></script>
 
     <style>
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-image: linear-gradient(to top right, #edd0f7, #430149);
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-image: linear-gradient(to top right, #edd0f7, #430149);
+      }
 
-}
+      .container {
+        background-color: #ffffff31;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 300px;
+      }
 
-.container {
-    background-color: #ffffff31;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 300px;
-}
+      .container > div {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
 
-.container > div {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+      #valueDisplay {
+        /* font-weight: bold; */
+        font-size: 18px;
+        color: #333;
+      }
 
-#valueDisplay {
-    /* font-weight: bold; */
-    font-size: 18px;
-    color: #333;
-}
+      input[type="range"] {
+        width: 100%;
+      }
 
-input[type="range"] {
-    width: 100%;
-}
+      input[type="text"] {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
 
-input[type="text"] {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+      button {
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
 
-button {
-    padding: 10px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-
+      button:hover {
+        background-color: #0056b3;
+      }
+      .history {
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+      }
+      .round {
+        width: 50px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        margin: 5px;
+        flex-wrap: wrap;
+      }
+      .bg_green {
+        background-color: greenyellow;
+      }
+      .bg_red {
+        background-color: red;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-
+  <body>
+    <div class="history" id="DOM_history"></div>
     <div class="container">
-        <div >
-            <span id="valueDisplay" >10000</span>
-            <input id="slider" type="range"  min="0" max="55000" value="10000" step="1000">
-        </div>
-        <div >
-            <span  id="addon-wrapping">Token</span>
-            <input id="DOM_accessToken" type="text"  value="">
-        </div>
-        <button   id="DOM_isPlay">Play</button>
-        <button  id="DOM_isConnectGame">Connect Game </button>
-        <button  id="DOM_isConnectMyServer">Connect My Server</button>
+      <div>
+        <span id="valueDisplay">10000</span>
+        <input
+          id="slider"
+          type="range"
+          min="0"
+          max="55000"
+          value="10000"
+          step="1000"
+        />
+      </div>
+      <div>
+        <span id="addon-wrapping">Token</span>
+        <input id="DOM_accessToken" type="text" value="" />
+      </div>
+      <div>
+        <span>Model</span>
+        <input id="DOM_model" type="text" value="" disabled />
+      </div>
+      <button id="DOM_isPlay">Play</button>
+      <button id="DOM_isConnectGame">Connect Game</button>
+      <button id="DOM_isConnectMyServer">Connect My Server</button>
+      <button id="DOM_buildModel">Build Model</button>
     </div>
 
     <script src="./src/socket_io.js"></script>
+    <script src="./src/tensor.js"></script>
     <script src="./src/main.js"></script>
     <script src="./src/remote.js"></script>
-
-
-</body>
-
+  </body>
 </html>
