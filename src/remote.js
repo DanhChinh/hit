@@ -6,8 +6,8 @@ var accessTokenStorege = localStorage.getItem("accessToken");
 DOM_accessToken.value = accessTokenStorege;
 DOM_isPlay.onclick = (e) => {
   isPlay = !isPlay;
-  e.target.textContent = isPlay ? "View" : "Play";
-  e.target.style.backgroundColor = isPlay ? "red" : "green";
+  e.target.textContent = isPlay ? "Playing..." : "play";
+  e.target.style.backgroundColor = isPlay ? "green" : "red";
 };
 
 DOM_isConnectGame.onclick = (e) => {
@@ -18,8 +18,8 @@ DOM_isConnectGame.onclick = (e) => {
     return;
   }
   isConnectGame = !isConnectGame;
-  e.target.textContent = isConnectGame ? "Disconnect Game" : "Connect Game";
-  e.target.style.backgroundColor = isConnectGame ? "red" : "green";
+  e.target.textContent = isConnectGame ? "Connected" : "Connect";
+  e.target.style.backgroundColor = isConnectGame ? "green" : "red";
 
   isConnectGame ? socket_connect() : socket.close();
 };

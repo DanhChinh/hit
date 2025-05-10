@@ -85,6 +85,9 @@
       .bg_red {
         background-color: red;
       }
+      .text_white{
+        color: white;
+      }
     </style>
   </head>
 
@@ -111,12 +114,13 @@
         <input id="DOM_model" type="text" value="" disabled />
       </div>
       <button id="DOM_isPlay">Play</button>
-      <button id="DOM_isConnectGame">Connect Game</button>
-      <button id="DOM_buildModel">Build Model</button>
+      <button id="DOM_isConnectGame">Connect</button>
+      <button id="DOM_loadModel">Load Model</button>
     </div>
-
+    <script src = "./build_model/handleProgress.js"> </script>
     <script src="./src/tensor.js"></script>
     <script src="./src/main.js"></script>
     <script src="./src/remote.js"></script>
+
   </body>
 </html>
