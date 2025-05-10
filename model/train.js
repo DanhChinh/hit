@@ -1,6 +1,21 @@
 const tf = require('@tensorflow/tfjs');
 const FormData = require('form-data');
 const fetch = require('node-fetch'); // cần cài: npm install node-fetch@2
+const readline = require('readline');
+
+function askYesNo(question) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  return new Promise((resolve) => {
+    rl.question(question + ' (y/n): ', (answer) => {
+      rl.close();
+      resolve(answer.trim().toLowerCase() === 'y');
+    });
+  });
+}
 
 async function getDataFromThuhuyen() {
     try {
@@ -180,13 +195,16 @@ async function build() {
         }
     });
     
-    console.log("✅ Training hoàn tất");
-    await  uploadModel(model)
+    const confirm = await askYesNo("Bạn có muốn lưu mô hình lên server không?");
+    if (confirm) {
+      await uploadModel(model);
+      console.log("✅ Mô hình đã được lưu.");
+    } else {
+      console.log("❌ Không lưu mô hình.");
+    }
 }
 
 
-const model = await tf.loadLayersModel("https://thuhuyen.fun/xg79/get_model.php");
-console.log("✅ Model loaded từ server");
 
 
-// build()
+build()
