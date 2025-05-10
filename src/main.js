@@ -81,7 +81,7 @@ function socket_connect() {
         console.log(" record.progress.push");
         if (record.progress.length === 40) {
           prd = await predict(JSON.parse(JSON.stringify(record.progress)));
-          sendMessageToGame(slider.value, record.sid, prd === 1 ? 1 : 2);
+          sendMessageToGame(slider.value, record.sid, prd);
           console.log("prd", prd);
         }
         return;
@@ -94,17 +94,18 @@ function socket_connect() {
         record.d3 = mgs.d3;
         sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
         is_betting = false;
-        let rs = mgs.d1 + mgs.d1 + mgs.d3;
+        let rs = mgs.d1 + mgs.d2 + mgs.d3;
         console.log("rs18: ", rs);
-        rs = rs > 10 ? 1 : 0;
+        rs = rs > 10 ? 1 : 2;
         checkPrd(prd, rs);
+        console.groupEnd()
         return;
       }
       //start
       if (mgs.cmd === 15005) {
         record = initRecord();
         record.sid = mgs.sid;
-        console.log("start", record);
+        console.group(record.sid);
         is_betting = true;
         return;
       }

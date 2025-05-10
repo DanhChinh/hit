@@ -70,7 +70,7 @@ async function predict(progress) {
   const value = (await output.data())[0]; // Lấy giá trị dự đoán đầu tiên
   console.log(value);
 
-  return value >= 0.5 ? 1 : 0;
+  return value >= 0.5 ? 1 : 2;
 }
 
 // Bước 5: Kết hợp tất cả trong hàm main
@@ -92,7 +92,7 @@ DOM_buildModel.onclick = async (e) => {
   e.target.disabled = true;
   e.target.textContent = "Building...";
   e.target.style.backgroundColor = "gray";
-  const model = await build();
+  model = await build();
   if (model) {
     e.target.textContent = "Build done";
     e.target.style.backgroundColor = "green";

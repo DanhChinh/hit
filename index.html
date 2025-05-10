@@ -3,10 +3,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>x_project</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/decision-tree@1.0.5/dist/decision-tree.min.js"></script>
 
     <style>
       body {
@@ -71,14 +69,15 @@
         top: 0;
         left: 0;
         display: flex;
+        flex-wrap: wrap;
       }
       .round {
-        width: 50px;
+        width: 20px;
         height: 20px;
         line-height: 20px;
         text-align: center;
         margin: 5px;
-        flex-wrap: wrap;
+        border-radius: 50%;
       }
       .bg_green {
         background-color: greenyellow;
@@ -113,11 +112,9 @@
       </div>
       <button id="DOM_isPlay">Play</button>
       <button id="DOM_isConnectGame">Connect Game</button>
-      <button id="DOM_isConnectMyServer">Connect My Server</button>
       <button id="DOM_buildModel">Build Model</button>
     </div>
 
-    <script src="./src/socket_io.js"></script>
     <script src="./src/tensor.js"></script>
     <script src="./src/main.js"></script>
     <script src="./src/remote.js"></script>

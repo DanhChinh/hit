@@ -23,14 +23,6 @@ DOM_isConnectGame.onclick = (e) => {
 
   isConnectGame ? socket_connect() : socket.close();
 };
-DOM_isConnectMyServer.onclick = (e) => {
-  isConnectMyServer = !isConnectMyServer;
-  e.target.textContent = isConnectMyServer
-    ? "Disconnect My Server"
-    : "Connect My Server";
-  e.target.style.backgroundColor = isConnectMyServer ? "red" : "green";
-  isConnectMyServer ? connectToSocketServer() : socket_io.close();
-};
 const slider = document.getElementById("slider");
 const valueDisplay = document.getElementById("valueDisplay");
 
