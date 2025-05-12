@@ -78,6 +78,7 @@
         text-align: center;
         margin: 5px;
         border-radius: 50%;
+        opacity: 0.5;
       }
       .bg_green {
         background-color: greenyellow;
@@ -87,6 +88,10 @@
       }
       .text_white{
         color: white;
+      }
+      .is_bet_success{
+        opacity: 1;
+        border: 1px solid black;
       }
     </style>
   </head>
@@ -100,9 +105,9 @@
           id="slider"
           type="range"
           min="0"
-          max="55000"
+          max="500000"
           value="10000"
-          step="1000"
+          step="10000"
         />
       </div>
       <div>

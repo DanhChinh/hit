@@ -1,9 +1,9 @@
 function sendMessageToGame(b, sid, eid) {
-  let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
-  console.log("send game:", message);
   if (!b || !sid || !eid || !isPlay) {
     return 0;
   }
+  let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
+  console.log(`${b} ->${eid}`)
   socket.send(message);
 }
 var MESSAGE_WS = {
@@ -44,6 +44,7 @@ function sendDataToThuhuyenFun(record) {
       } else {
         console.error("Lỗi: " + response.data.message);
       }
+      console.groupEnd()
     })
     .catch((error) => {
       console.error("Lỗi kết nối:", error);
@@ -53,6 +54,7 @@ var sendInterval;
 var counter_send = 0;
 var socket;
 var is_betting = false;
+var is_bet_success  = false;
 var initRecord = (
   sid = undefined,
   progress = [],
@@ -78,11 +80,11 @@ function socket_connect() {
       //betting
       if (mgs.cmd === 15007 && is_betting) {
         record.progress.push(JSON.parse(JSON.stringify(mgs.bs)));
-        console.log(" record.progress.push");
+        console.log("...");
         if (record.progress.length === 40) {
           prd = await predict(JSON.parse(JSON.stringify(record.progress)));
           sendMessageToGame(slider.value, record.sid, prd);
-          console.log("prd", prd);
+          console.log("->>", prd);
         }
         return;
       }
@@ -95,10 +97,9 @@ function socket_connect() {
         sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
         is_betting = false;
         let rs = mgs.d1 + mgs.d2 + mgs.d3;
-        console.log("rs18: ", rs);
+        console.log("->>>>", rs);
         rs = rs > 10 ? 1 : 2;
         checkPrd(prd, rs);
-        console.groupEnd()
         return;
       }
       //start
@@ -107,11 +108,13 @@ function socket_connect() {
         record.sid = mgs.sid;
         console.group(record.sid);
         is_betting = true;
+        is_bet_success = false;
         return;
       }
       //sended
       if (mgs.cmd === 15002) {
-        console.log(mgs);
+        console.log("bet->ok");
+        is_bet_success = true;
         return;
       }
 
@@ -164,6 +167,9 @@ function checkPrd(prd, rs) {
     is_false += 1;
     element.classList.add("bg_red");
     element.innerText = is_false;
+  }
+  if(is_bet_success){
+    element.classList.add("is_bet_success")
   }
   DOM_history.appendChild(element);
 }
