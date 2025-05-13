@@ -1,9 +1,12 @@
+
+
 function sendMessageToGame(b, sid, eid) {
   if (!b || !sid || !eid || !isPlay) {
     return 0;
   }
   let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
-  console.log(`${b} ->${eid}`)
+  addMessage(`${b} ->${eid}` )
+
   socket.send(message);
 }
 var MESSAGE_WS = {
@@ -15,9 +18,9 @@ var MESSAGE_WS = {
     "",
     { agentId: "1", accessToken: accessToken, reconnect: false },
   ],
+  
   info: ["6", "MiniGame2", "taixiu_live_gateway_plugin", { cmd: 15000 }],
   result: (counter) => ["7", "MiniGame2", "1", counter],
-  Hkl: [6, "ShakeDisk", "SD_HoangKimLongPlugin", { cmd: 1950 }],
   bet: (b, sid, eid) => [
     "6",
     "MiniGame2",
@@ -40,11 +43,11 @@ function sendDataToThuhuyenFun(record) {
     .post("https://thuhuyen.fun/xg79/post_data.php", data)
     .then((response) => {
       if (response.data.success) {
-        console.log("Dữ liệu đã được lưu trữ thành công");
+        addMessage("Dữ liệu đã được lưu trữ thành công");
       } else {
         console.error("Lỗi: " + response.data.message);
       }
-      console.groupEnd()
+      // console.groupEnd()
     })
     .catch((error) => {
       console.error("Lỗi kết nối:", error);
@@ -70,21 +73,22 @@ function socket_connect() {
   socket = new WebSocket(MESSAGE_WS.url);
 
   socket.onopen = function (event) {
-    console.log("Kết nối WebSocket đã mở.");
+    addMessage("Kết nối WebSocket đã mở.");
     socket.send(JSON.stringify(MESSAGE_WS.login(accessToken)));
   };
 
   socket.onmessage = async function (event) {
     let mgs = JSON.parse(event.data)[1];
+
     if (typeof mgs === "object") {
       //betting
       if (mgs.cmd === 15007 && is_betting) {
         record.progress.push(JSON.parse(JSON.stringify(mgs.bs)));
-        console.log("...");
+        
         if (record.progress.length === 40) {
           prd = await predict(JSON.parse(JSON.stringify(record.progress)));
           sendMessageToGame(slider.value, record.sid, prd);
-          console.log("->>", prd);
+          addMessage(`->> ${prd}`);
         }
         return;
       }
@@ -97,7 +101,7 @@ function socket_connect() {
         sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
         is_betting = false;
         let rs = mgs.d1 + mgs.d2 + mgs.d3;
-        console.log("->>>>", rs);
+        addMessage(`rs: ${rs}`)
         rs = rs > 10 ? 1 : 2;
         checkPrd(prd, rs);
         return;
@@ -106,26 +110,26 @@ function socket_connect() {
       if (mgs.cmd === 15005) {
         record = initRecord();
         record.sid = mgs.sid;
-        console.group(record.sid);
+        // console.group(record.sid);
         is_betting = true;
         is_bet_success = false;
         return;
       }
       //sended
       if (mgs.cmd === 15002) {
-        console.log("bet->ok");
+        addMessage("status: 200")
         is_bet_success = true;
         return;
       }
 
       if (mgs.cmd === 100) {
-        console.log("success: ", mgs);
+        addMessage(JSON.stringify(mgs))
         return;
       }
     } else {
       if (mgs === true) {
         socket.send(JSON.stringify(MESSAGE_WS.info));
-        console.log("send MESSAGE_WS.info");
+        addMessage("sendInterval keep ws");
         setTimeout(() => {
           sendInterval = setInterval(() => {
             socket.send(JSON.stringify(MESSAGE_WS.result(counter_send)));

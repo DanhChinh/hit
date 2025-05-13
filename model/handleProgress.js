@@ -14,7 +14,8 @@ async function predict(progress) {
     const inputTensor = tf.tensor2d([inputData]); // Chuyển đầu vào thành tensor
     const output = model.predict(inputTensor); // Dự đoán đầu ra
     const value = (await output.data())[0]; // Lấy giá trị dự đoán đầu tiên
-    console.log(value," <--- ", inputData);
+    addMessage(inputData)
+    addMessage(value)
   
     return value >= 0.5 ? 1 : 2;
   }

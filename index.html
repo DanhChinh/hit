@@ -1,131 +1,75 @@
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>x_project</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script>
 
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        background-image: linear-gradient(to top right, #edd0f7, #430149);
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>x_project</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script>
+  <link rel="stylesheet" href="./src/style.css">
+</head>
 
-      .container {
-        background-color: #ffffff31;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        width: 300px;
-      }
-
-      .container > div {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      #valueDisplay {
-        /* font-weight: bold; */
-        font-size: 18px;
-        color: #333;
-      }
-
-      input[type="range"] {
-        width: 100%;
-      }
-
-      input[type="text"] {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-
-      button {
-        padding: 10px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-      }
-
-      button:hover {
-        background-color: #0056b3;
-      }
-      .history {
-        position: fixed;
-        top: 0;
-        left: 0;
-        display: flex;
-        flex-wrap: wrap;
-      }
-      .round {
-        width: 20px;
-        height: 20px;
-        line-height: 20px;
-        text-align: center;
-        margin: 5px;
-        border-radius: 50%;
-        opacity: 0.5;
-      }
-      .bg_green {
-        background-color: greenyellow;
-      }
-      .bg_red {
-        background-color: red;
-      }
-      .text_white{
-        color: white;
-      }
-      .is_bet_success{
-        opacity: 1;
-        border: 1px solid black;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="history" id="DOM_history"></div>
-    <div class="container">
-      <div>
-        <span id="valueDisplay">10000</span>
-        <input
-          id="slider"
-          type="range"
-          min="0"
-          max="500000"
-          value="10000"
-          step="10000"
-        />
-      </div>
-      <div>
-        <span id="addon-wrapping">Token</span>
-        <input id="DOM_accessToken" type="text" value="" />
-      </div>
-      <div>
-        <span>Model</span>
-        <input id="DOM_model" type="text" value="" disabled />
-      </div>
-      <button id="DOM_isPlay">Play</button>
-      <button id="DOM_isConnectGame">Connect</button>
-      <button id="DOM_loadModel">Load Model</button>
+<body>
+  <div class="history" id="DOM_history"></div>
+  <div class="container">
+    <div>
+      <span id="valueDisplay">10000</span>
+      <input id="slider" type="range" min="0" max="500000" value="10000" step="10000" />
     </div>
-    <script src = "./model/handleProgress.js"> </script>
-    <script src="./src/tensor.js"></script>
-    <script src="./src/main.js"></script>
-    <script src="./src/remote.js"></script>
+    <div>
+      <span id="addon-wrapping">Token</span>
+      <input id="DOM_accessToken" type="text" value="" />
+    </div>
+    <div>
+      <span>Model</span>
+      <input id="DOM_model" type="text" value="" disabled />
+    </div>
+    <button id="DOM_isPlay">Play</button>
+    <button id="DOM_isConnectGame">Connect</button>
+    <button id="DOM_loadModel">Load Model</button>
+  </div>
 
-  </body>
+  <div id="chat-container">
+    <div id="chat-messages"></div>
+    <div id="chat-input">
+      <input type="text" id="messageInput" placeholder="Nhập tin nhắn...">
+      <button onclick="sendMessage()">Gửi</button>
+    </div>
+  </div>
+
+
+  <script src="./model/handleProgress.js"> </script>
+  <script src="./src/tensor.js"></script>
+  <script>
+    function getCurrentTime() {
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const seconds = now.getSeconds().toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+      if (message !== '') {
+        addMessage(message);
+        input.value = '';
+      }
+    }
+
+    function addMessage(content = "...") {
+      const chatBox = document.getElementById('chat-messages');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'chat-message';
+      msgDiv.textContent = `[${getCurrentTime()}] ${content}`;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+  <script src="./src/main.js"></script>
+  <script src="./src/remote.js"></script>
+
+</body>
+
 </html>
