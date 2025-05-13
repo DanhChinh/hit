@@ -20,5 +20,5 @@ DOM_loadModel.onclick = async(e)=>{
   await loadModel();
   DOM_model.value = `${model.name}`;
   e.target.style.backgroundColor = "green";
-  addMessage(`model -> ${model.name}`)
+  addMessage(`model -> ${model.name}`, "server")
 }

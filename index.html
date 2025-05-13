@@ -13,8 +13,8 @@
   <div class="history" id="DOM_history"></div>
   <div class="container">
     <div>
-      <span id="valueDisplay">10000</span>
-      <input id="slider" type="range" min="0" max="500000" value="10000" step="10000" />
+      <span id="valueDisplay">100000</span>
+      <input id="slider" type="range" min="0" max="500000" value="100000" step="10000" />
     </div>
     <div>
       <span id="addon-wrapping">Token</span>
@@ -58,11 +58,11 @@
       }
     }
 
-    function addMessage(content = "...") {
+    function addMessage(content = "...", from = "player") {
       const chatBox = document.getElementById('chat-messages');
       const msgDiv = document.createElement('div');
-      msgDiv.className = 'chat-message';
-      msgDiv.textContent = `[${getCurrentTime()}] ${content}`;
+      msgDiv.className = `chat-message ${from}`;
+      msgDiv.innerHTML = `<small>${getCurrentTime()}___${from}:</small><br/>${content}`;
       chatBox.appendChild(msgDiv);
       chatBox.scrollTop = chatBox.scrollHeight;
     }

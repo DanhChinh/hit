@@ -5,7 +5,7 @@ function sendMessageToGame(b, sid, eid) {
     return 0;
   }
   let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
-  addMessage(`${b} ->${eid}` )
+  addMessage(`${b} ->${eid}` , "player")
 
   socket.send(message);
 }
@@ -43,7 +43,7 @@ function sendDataToThuhuyenFun(record) {
     .post("https://thuhuyen.fun/xg79/post_data.php", data)
     .then((response) => {
       if (response.data.success) {
-        addMessage("Dữ liệu đã được lưu trữ thành công");
+        addMessage("Dữ liệu đã được lưu trữ thành công", "server");
       } else {
         console.error("Lỗi: " + response.data.message);
       }
@@ -73,7 +73,7 @@ function socket_connect() {
   socket = new WebSocket(MESSAGE_WS.url);
 
   socket.onopen = function (event) {
-    addMessage("Kết nối WebSocket đã mở.");
+    addMessage("Kết nối WebSocket đã mở.", "server");
     socket.send(JSON.stringify(MESSAGE_WS.login(accessToken)));
   };
 
@@ -88,7 +88,7 @@ function socket_connect() {
         if (record.progress.length === 40) {
           prd = await predict(JSON.parse(JSON.stringify(record.progress)));
           sendMessageToGame(slider.value, record.sid, prd);
-          addMessage(`->> ${prd}`);
+          addMessage(`->> ${prd}`, "bot");
         }
         return;
       }
@@ -101,7 +101,7 @@ function socket_connect() {
         sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
         is_betting = false;
         let rs = mgs.d1 + mgs.d2 + mgs.d3;
-        addMessage(`rs: ${rs}`)
+        addMessage(`rs: ${rs}`, "server")
         rs = rs > 10 ? 1 : 2;
         checkPrd(prd, rs);
         return;
@@ -117,19 +117,19 @@ function socket_connect() {
       }
       //sended
       if (mgs.cmd === 15002) {
-        addMessage("status: 200")
+        addMessage("status: 200", "server")
         is_bet_success = true;
         return;
       }
 
       if (mgs.cmd === 100) {
-        addMessage(JSON.stringify(mgs))
+        addMessage(JSON.stringify(mgs), "server")
         return;
       }
     } else {
       if (mgs === true) {
         socket.send(JSON.stringify(MESSAGE_WS.info));
-        addMessage("sendInterval keep ws");
+        addMessage("sendInterval keep ws", "player");
         setTimeout(() => {
           sendInterval = setInterval(() => {
             socket.send(JSON.stringify(MESSAGE_WS.result(counter_send)));
