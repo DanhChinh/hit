@@ -107,21 +107,21 @@ button:hover {
   flex-direction: column;
   overflow: hidden;
 }
-#chat-container {
-  overflow: auto; /* hoặc scroll */
-  scrollbar-width: none;       /* Firefox */
-  -ms-overflow-style: none;    /* IE & Edge */
-}
 
-#chat-container::-webkit-scrollbar {
-  display: none;               /* Chrome, Safari */
-}
 #chat-messages {
   flex: 1;
   padding: 10px;
   overflow-y: auto;
 }
+#chat-messages {
+  overflow: auto; /* hoặc scroll */
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* IE & Edge */
+}
 
+#chat-messages::-webkit-scrollbar {
+  display: none;               /* Chrome, Safari */
+}
 .chat-message {
   /* background: #f1f1f1; */
   padding: 8px 12px;
