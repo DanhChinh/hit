@@ -68,12 +68,11 @@ button:hover {
 }
 
 .round {
-  width: 20px;
+  width: 40px;
   height: 20px;
   line-height: 20px;
   text-align: center;
-  margin: 5px;
-  border-radius: 50%;
+  margin: 1px;
   opacity: 0.5;
 }
 
@@ -124,6 +123,7 @@ button:hover {
   word-wrap: break-word;
   /* hoặc: overflow-wrap: break-word; */
   white-space: normal;
+  z-index: 1;
 }
 
 #chat-input {
