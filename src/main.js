@@ -161,16 +161,17 @@ function checkPrd(prd, rs) {
   if (prd === undefined) {
     return;
   }
+  let prd_string  = prd ==1?"<":">";
   let element = document.createElement("div");
   element.classList.add("round");
   if (prd === rs) {
     is_true += 1;
     element.classList.add("bg_green");
-    element.innerText = is_true;
+    element.innerText = `${is_true}${prd_string}`;
   } else {
     is_false += 1;
     element.classList.add("bg_red");
-    element.innerText = is_false;
+    element.innerText = `${is_false}${prd_string}`;
   }
   if(is_bet_success){
     element.classList.add("is_bet_success")

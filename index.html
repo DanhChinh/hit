@@ -11,7 +11,7 @@
 
 <body>
   <div class="history" id="DOM_history"></div>
-  <div class="container">
+  <div id="form_controll" class="container">
     <div>
       <span id="valueDisplay">100000</span>
       <input id="slider" type="range" min="0" max="500000" value="100000" step="10000" />
@@ -37,10 +37,21 @@
     </div> -->
   </div>
 
+  <button id="hide_form" onclick="handleTogle()">
+    togle
+  </button>
 
   <script src="./model/handleProgress.js"> </script>
   <script src="./src/tensor.js"></script>
   <script>
+    function handleTogle(){
+      let element = form_controll;
+      if (element.style.display === "none" ) {
+    element.style.display = "flex"; // hoặc "inline", "flex", tùy layout bạn muốn
+  } else {
+    element.style.display = "none";
+  }
+    }
     function getCurrentTime() {
   const now = new Date();
   const hours = now.getHours().toString().padStart(2, '0');

@@ -72,7 +72,6 @@ button:hover {
   height: 20px;
   line-height: 20px;
   text-align: center;
-  margin: 1px;
   opacity: 0.5;
 }
 
@@ -108,7 +107,15 @@ button:hover {
   flex-direction: column;
   overflow: hidden;
 }
+#chat-container {
+  overflow: auto; /* hoặc scroll */
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* IE & Edge */
+}
 
+#chat-container::-webkit-scrollbar {
+  display: none;               /* Chrome, Safari */
+}
 #chat-messages {
   flex: 1;
   padding: 10px;
@@ -159,4 +166,15 @@ button:hover {
 }
 .server{
   color: #333;
+}
+
+#hide_form{
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  z-index: 10;
+  background-color: #430149;
+  color: white;
+  text-align: center;
+
 }
