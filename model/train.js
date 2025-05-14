@@ -33,13 +33,24 @@ async function getDataFromThuhuyen() {
     }
 }
 function handleProgress(progress_i) {
-    const prg = progress_i.slice(30, 40);
+    const prg = progress_i.slice(10, 40);
     let row = [];
 
-    prg.forEach((e) => {
-        row.push(parseFloat((e[1].bc / e[0].bc).toFixed(2)));
-        row.push(parseFloat((e[1].v / e[0].v).toFixed(2)));
-    });
+    for(let i=1; i<prg.length; i++){
+        let e = prg[i]
+        let d_v_0 = prg[i][0].v - prg[i-1][0].v
+        let d_v_1 = prg[i][1].v - prg[i-1][1].v
+        let d_bc_0 = prg[i][0].bc - prg[i-1][0].bc
+        let d_bc_1 = prg[i][1].bc - prg[i-1][1].bc
+        row.push(parseInt(e[1].bc) );
+        row.push(parseInt(e[1].v) );
+        row.push(parseInt(e[0].bc) );
+        row.push(parseInt(e[0].v) );
+        row.push(parseInt(d_v_0))
+        row.push(parseInt(d_v_1))
+        row.push(parseInt(d_bc_0))
+        row.push(parseInt(d_bc_1))
+    }
     return row;
 }
 function hasNaN1D(array) {
@@ -66,40 +77,7 @@ function preprocessData(data) {
     return { xs, ys };
 }
 
-// // Bước 3: Đào tạo và lưu mô hình lên server
-// async function trainModel(xs, ys) {a
-//     const model = tf.sequential();
-//     model.add(tf.layers.dense({
-//         units: 10,
-//         inputShape: [xs[0].length],
-//         activation: "relu"
-//     }));
-//     model.add(tf.layers.dense({ units: 1, activation: "sigmoid" }));
 
-//     model.compile({
-//         optimizer: tf.train.adam(),
-//         loss: tf.losses.meanSquaredError,
-//     });
-
-//     const xs = tf.tensor2d(xs);
-//     const ys = tf.tensor2d(ys);
-
-//     await model.fit(xs, ys, {
-//         epochs: 500,
-//         callbacks: {
-//             onEpochEnd: (epoch, logs) => {
-//                 if (epoch % 100 === 0) {
-//                     console.log(`Epoch ${epoch}: loss = ${logs.loss}`);
-//                 }
-//             },
-//         },
-//     });
-
-//     // Gửi model lên server
-//     await uploadModel(model);
-
-//     return model;
-// }
 
 // // Bước 4: Gửi mô hình lên server thông qua API
 async function uploadModel(model) {
@@ -144,25 +122,7 @@ async function uploadModel(model) {
         console.log("✅ Model uploaded successfully!");
     }));
 }
-// // Bước 5: Dự đoán bằng mô hình tải từ server
 
-
-// async function loadModelFromServer() {
-//     model = await tf.loadLayersModel('/models/model.json');
-//     console.log("Model loaded from server.");
-// }
-
-// async function predict(progress) {
-//     if (!model) {
-//         await loadModelFromServer();
-//     }
-
-//     const inputData = handleProgress(progress);
-//     const inputTensor = tf.tensor2d([inputData]);
-//     const output = model.predict(inputTensor);
-//     const value = (await output.data())[0];
-//     return value >= 0.5 ? 1 : 2;
-// }
 
 // // Bước 6: Hàm tổng
 async function build() {
@@ -170,13 +130,17 @@ async function build() {
     if (!rawData) return;
 
     const { xs, ys } = preprocessData(rawData);
+    // console.log(xs[0])
+    // return;
 
 
     const inputTensor = tf.tensor2d(xs);
     const labelTensor = tf.tensor2d(ys);
 
     const model = tf.sequential();
-    model.add(tf.layers.dense({ units: 100, activation: 'relu', inputShape: [xs[0].length] }));
+    model.add(tf.layers.dense({ units: 100, activation: 'sigmoid', inputShape: [xs[0].length] }));
+    model.add(tf.layers.dense({ units: 18, activation: 'sigmoid' }));
+    model.add(tf.layers.dense({ units: 2, activation: 'sigmoid' }));
     model.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
 
     model.compile({
@@ -186,7 +150,7 @@ async function build() {
     });
 
     await model.fit(inputTensor, labelTensor, {
-        epochs: 500,
+        epochs: 100,
         batchSize: 32,
         callbacks: {
             onEpochEnd: (epoch, logs) => {
