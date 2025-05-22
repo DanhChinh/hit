@@ -9,7 +9,7 @@ let open = 0;
 for (let i = 0; i < rawData.length; i++) {
     const result = calcCandle(open, rawData[i]);
     candleData.push(result.candle);
-    labels.push(`${i + 1}`);
+    labels.push(getCurrentTime());
     open = result.close;
 }
 
@@ -64,10 +64,19 @@ function addData(newChange) {
 
     const result = calcCandle(lastClose, newChange);
     candleData.push(result.candle);
-    labels.push(`Ngày ${labels.length}`);
+    labels.push(getCurrentTime());
 
     chart.setOption({
         xAxis: { data: labels },
         series: [{ data: candleData }]
     });
+}
+function getCurrentTime() {
+    const now = new Date();
+
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+
+    return `${hours}:${minutes}:${seconds}`;
 }

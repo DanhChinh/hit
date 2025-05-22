@@ -6,7 +6,7 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
-  background-image: linear-gradient(to top right, #edd0f7, #430149);
+  /* background-image: linear-gradient(to top right, #edd0f7, #430149); */
 }
 
 .container {

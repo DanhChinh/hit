@@ -159,9 +159,9 @@ var is_false = 0;
 var prd = undefined;
 var value = 0;
 function checkPrd(prd, rs, value) {
-  if (prd === undefined || value === 0) {
-    return;
-  }
+  // if (prd === undefined || value === 0) {
+  //   return;
+  // }
   let reward = value;
   if (prd != rs) {
     reward *= -1
