@@ -43,7 +43,7 @@ function sendDataToThuhuyenFun(record) {
     .post("https://thuhuyen.fun/xg79/post_data.php", data)
     .then((response) => {
       if (response.data.success) {
-        addMessage("Save->done", "server");
+        addMessage("save->done", "server");
       } else {
         console.error("Lỗi: " + response.data.message);
       }
@@ -88,7 +88,6 @@ function socket_connect() {
         if (record.progress.length === 40) {
           [prd, value] = await predict(JSON.parse(JSON.stringify(record.progress)));
           sendMessageToGame(slider.value * value, record.sid, prd);
-          addMessage(`${prd}`, "bot");
         }
         return;
       }
