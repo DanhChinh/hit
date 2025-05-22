@@ -178,3 +178,8 @@ button:hover {
   text-align: center;
 
 }
+
+#echart{
+  width: 800px;
+  height: 500px;
+}

@@ -1,30 +1,43 @@
 const tf = require('@tensorflow/tfjs');
 const FormData = require('form-data');
-const fetch = require('node-fetch'); // cần cài: npm install node-fetch@2
+const fetch = require('node-fetch'); // npm install node-fetch@2
 const readline = require('readline');
 
+// ------------------- Hàm phụ trợ -------------------
 function askYesNo(question) {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
-
-  return new Promise((resolve) => {
-    rl.question(question + ' (y/n): ', (answer) => {
-      rl.close();
-      resolve(answer.trim().toLowerCase() === 'y');
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    return new Promise(resolve => {
+        rl.question(question + ' (y/n): ', (answer) => {
+            rl.close();
+            resolve(answer.trim().toLowerCase() === 'y');
+        });
     });
-  });
 }
 
+function hasNaN1D(array) {
+    return array.some(value => isNaN(value));
+}
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function split2DArray(array2D, numChunks) {
+    const rowsPerChunk = Math.floor(array2D.length / numChunks);
+    const result = [];
+    for (let i = 0; i < numChunks; i++) {
+        const start = i * rowsPerChunk;
+        const end = i === numChunks - 1 ? array2D.length : start + rowsPerChunk;
+        result.push(array2D.slice(start, end));
+    }
+    return result;
+}
+
+// ------------------- Lấy & xử lý dữ liệu -------------------
 async function getDataFromThuhuyen() {
     try {
-        const response = await fetch("https://thuhuyen.fun/xg79/get_data.php");
-
-        if (!response.ok) {
-            throw new Error(`Lỗi HTTP: ${response.status}`);
-        }
-
+        const response = await fetch('https://thuhuyen.fun/xg79/get_data.php');
+        if (!response.ok) throw new Error(`Lỗi HTTP: ${response.status}`);
         const data = await response.json();
         return data.data;
     } catch (error) {
@@ -32,59 +45,88 @@ async function getDataFromThuhuyen() {
         return null;
     }
 }
-function handleProgress(progress_i) {
-    const prg = progress_i.slice(10, 40);
-    let row = [];
 
-    for(let i=1; i<prg.length; i++){
-        let e = prg[i]
-        let d_v_0 = prg[i][0].v - prg[i-1][0].v
-        let d_v_1 = prg[i][1].v - prg[i-1][1].v
-        let d_bc_0 = prg[i][0].bc - prg[i-1][0].bc
-        let d_bc_1 = prg[i][1].bc - prg[i-1][1].bc
-        row.push(parseInt(e[1].bc) );
-        row.push(parseInt(e[1].v) );
-        row.push(parseInt(e[0].bc) );
-        row.push(parseInt(e[0].v) );
-        row.push(parseInt(d_v_0))
-        row.push(parseInt(d_v_1))
-        row.push(parseInt(d_bc_0))
-        row.push(parseInt(d_bc_1))
+function ghiFile(arr, filename){
+        const fs = require('fs');
+    const data = arr.map(row => row.join(',')).join('\n');
+    // Ghi vào file
+    fs.writeFile(filename, data, (err) => {
+      if (err) throw err;
+      console.log('Đã ghi mảng 2 chiều thành từng dòng!');
+    });
+}
+function handleProgress(progress_i) {
+    // Lấy một phần dữ liệu từ chỉ số 10 đến 40
+    const prg = progress_i.slice(10, 40);
+    const row = [];
+
+    for (let i = 1; i < prg.length; i++) {
+        const curr = prg[i];
+        const prev = prg[i - 1];
+
+        // Kiểm tra dữ liệu hợp lệ và đảm bảo rằng tất cả các giá trị là số
+        if (
+            !curr || !prev || 
+            !isValidData(curr[0]) || !isValidData(curr[1]) || 
+            !isValidData(prev[0]) || !isValidData(prev[1])
+        ) {
+            console.warn(`⚠️ Dữ liệu không hợp lệ tại index ${i}`, curr);
+            continue;  // Bỏ qua dữ liệu không hợp lệ và tiếp tục với dữ liệu sau
+        }
+
+        // Tính toán sự khác biệt giữa các giá trị
+        const d_v_0 = curr[0].v - prev[0].v;
+        const d_v_1 = curr[1].v - prev[1].v;
+        const d_bc_0 = curr[0].bc - prev[0].bc;
+        const d_bc_1 = curr[1].bc - prev[1].bc;
+
+        // Thêm kết quả vào mảng row
+        row.push(curr[1].bc, curr[1].v, curr[0].bc, curr[0].v, d_v_0, d_v_1, d_bc_0, d_bc_1);
     }
+
     return row;
 }
-function hasNaN1D(array) {
-    return array.some(value => isNaN(value));
+
+// Hàm kiểm tra dữ liệu hợp lệ
+function isValidData(data) {
+    return data && typeof data.v === 'number' && !isNaN(data.v) && typeof data.bc === 'number' && !isNaN(data.bc);
 }
 
-// Bước 2: Xử lý dữ liệu
+function quaNuaLaKhong(arr) {
+    let demKhong = arr.filter(x => x == 0).length;
+    return demKhong > arr.length / 2;
+  }
+  
 function preprocessData(data) {
-    const data_parser = data.map((e) => JSON.parse(e.progress));
-    let example = handleProgress(data_parser[0])
-    // const ys = data.map((e) => (+e.d1 + +e.d2 + +e.d3 > 10 ? [1] : [0]));
-    // const xs = data_parser.map((e) => handleProgress(e));
-    let xs = []
-    let ys = []
-    for(let i=0; i< data.length; i++){
-        let x = handleProgress(data_parser[i]);
-        let y = (+data[i].d1 + +data[i].d2 + +data[i].d3 > 10 ? [1] : [0])
-        if(x.length === example.length && !hasNaN1D(x) && !isNaN(y[0])){
+    const dataParser = data.map(e => JSON.parse(e.progress));
+    const example = handleProgress(dataParser[0]);
+
+    const xs = [];
+    const ys = [];
+
+    for (let i = 0; i < data.length; i++) {
+        const x = handleProgress(dataParser[i]);
+        const y = +data[i].d1 + +data[i].d2 + +data[i].d3 > 10 ? [1] : [0];
+        if(quaNuaLaKhong(x)){
+            console.warn(`❌ Dữ liệu không hợp lệ 0000 tại mẫu ${data[i].sid}`);
+        }
+        if (x && x.length === example.length && !hasNaN1D(x) && !isNaN(y[0])) {
             xs.push(x);
-            ys.push(y)
+            ys.push(y);
+        }
+         else {
+            console.warn(`❌ Dữ liệu không hợp lệ tại mẫu ${data[i].sid}`);
         }
     }
 
     return { xs, ys };
 }
 
-
-
-// // Bước 4: Gửi mô hình lên server thông qua API
-async function uploadModel(model) {
+// ------------------- Upload model -------------------
+async function uploadModel(model, index) {
     await model.save(tf.io.withSaveHandler(async (modelArtifacts) => {
         const form = new FormData();
 
-        // JSON metadata
         const modelJson = JSON.stringify({
             modelTopology: modelArtifacts.modelTopology,
             format: 'layers-model',
@@ -96,79 +138,116 @@ async function uploadModel(model) {
             }]
         });
 
-        form.append('model.json', Buffer.from(modelJson), {
+        form.append(`model${index}.json`, Buffer.from(modelJson), {
             contentType: 'application/json',
-            filename: 'model.json'
+            filename: `model${index}.json`
         });
 
-        // Weights data
-        form.append('weights.bin', Buffer.from(modelArtifacts.weightData), {
+        form.append(`weights${index}.bin`, Buffer.from(modelArtifacts.weightData), {
             contentType: 'application/octet-stream',
-            filename: 'weights.bin'
+            filename: `weights${index}.bin`
         });
+
         const response = await fetch('https://thuhuyen.fun/xg79/upload_model.php', {
             method: 'POST',
             headers: form.getHeaders(),
             body: form
         });
 
-        const text = await response.text(); // hoặc response.json() nếu PHP trả về JSON
-        console.log("📦 Server response:", response.status, text);
-
-        if (!response.ok) {
-            throw new Error("❌ Upload model failed");
-        }
-
-        console.log("✅ Model uploaded successfully!");
+        const text = await response.text();
+        console.log(`📦 Server response [model ${index}]:`, response.status, text);
+        if (!response.ok) throw new Error("❌ Upload model failed");
     }));
 }
 
-
-// // Bước 6: Hàm tổng
+// ------------------- Hàm chính -------------------
 async function build() {
     const rawData = await getDataFromThuhuyen();
-    if (!rawData) return;
+    if (!rawData) {
+        console.error('❌ Không có dữ liệu.');
+        return;
+    }
 
-    const { xs, ys } = preprocessData(rawData);
-    // console.log(xs[0])
-    // return;
+    let { xs, ys } = preprocessData(rawData);
+   
+    // Chia dữ liệu thành các phần nhỏ
+    const xss = split2DArray(xs, 10);
+    const yss = split2DArray(ys, 10);
+    
 
-
-    const inputTensor = tf.tensor2d(xs);
-    const labelTensor = tf.tensor2d(ys);
-
+    // Khởi tạo mô hình một lần duy nhất
     const model = tf.sequential();
-    model.add(tf.layers.dense({ units: 100, activation: 'sigmoid', inputShape: [xs[0].length] }));
-    model.add(tf.layers.dense({ units: 18, activation: 'sigmoid' }));
-    model.add(tf.layers.dense({ units: 2, activation: 'sigmoid' }));
-    model.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
-
+    model.add(tf.layers.dense({
+        units: 128, 
+        activation: 'relu', 
+        inputShape: [xs[0].length]
+    }));
+    
+    // Thêm lớp Batch Normalization để ổn định huấn luyện
+    model.add(tf.layers.batchNormalization());
+    
+    // Lớp thứ hai
+    model.add(tf.layers.dense({
+        units: 128, 
+        activation: 'relu'
+    }));
+    
+    // Thêm lớp Dropout để giảm overfitting
+    model.add(tf.layers.dropout(0.2)); // 20% dropout
+    
+    // Lớp output, có thể là sigmoid hoặc softmax tùy vào loại bài toán
+    model.add(tf.layers.dense({
+        units: 1,  // Cho bài toán phân loại nhị phân
+        activation: 'sigmoid' // Nếu là phân loại nhị phân
+    }));
+    
+    // Biên dịch mô hình chỉ một lần
     model.compile({
-        optimizer: 'sgd',
+        optimizer: 'adam',  // Adam thường hoạt động tốt hơn so với SGD trong hầu hết các trường hợp
         loss: 'binaryCrossentropy',
         metrics: ['accuracy']
     });
 
-    await model.fit(inputTensor, labelTensor, {
-        epochs: 100,
-        batchSize: 32,
-        callbacks: {
-            onEpochEnd: (epoch, logs) => {
-                console.log(`Epoch ${epoch}: loss = ${logs.loss}, acc = ${logs.acc || logs.accuracy}`);
-            }
+    // Lặp qua từng phần dữ liệu và huấn luyện mô hình
+    for (let i = 0; i < 10; i++) {
+        let chunkXs = xss[i];
+        let chunkYs = yss[i];
+
+        // Kiểm tra dữ liệu trước khi tạo tensor
+        if (!Array.isArray(chunkXs) || chunkXs.length === 0 || !Array.isArray(chunkXs[0])) {
+            console.error(`❌ chunkXs không hợp lệ tại model ${i}`);
+            continue;
         }
-    });
-    
-    const confirm = await askYesNo("Bạn có muốn lưu mô hình lên server không?");
-    if (confirm) {
-      await uploadModel(model);
-      console.log("✅ Mô hình đã được lưu.");
-    } else {
-      console.log("❌ Không lưu mô hình.");
+        if (!Array.isArray(chunkYs) || chunkYs.length === 0 || !Array.isArray(chunkYs[0])) {
+            console.error(`❌ chunkYs không hợp lệ tại model ${i}`);
+            continue;
+        }
+
+        // Tạo Tensor từ chunk dữ liệu
+        const inputTensor = tf.tensor2d(chunkXs);
+        const labelTensor = tf.tensor2d(chunkYs);
+
+        // Huấn luyện mô hình với mỗi batch dữ liệu
+        await model.fit(inputTensor, labelTensor, {
+            epochs: 50,  // Giảm số epoch xuống để tránh overfitting, bạn có thể thử điều chỉnh
+            batchSize: randomInt(10, 100),  // Giữ batchSize ngẫu nhiên
+            validationSplit: 0.2,  // Dùng 20% dữ liệu để xác nhận
+            callbacks: {
+                onEpochEnd: (epoch, logs) => {
+                    console.log(`Epoch ${epoch}: loss = ${logs.loss}, acc = ${logs.acc || logs.accuracy}`);
+                }
+            }
+        });
+
+        // Sau khi huấn luyện xong cho một chunk, lưu mô hình (nếu cần)
+        if (true) {  // Bạn có thể thay đổi điều kiện này theo nhu cầu
+            await uploadModel(model, i);
+            console.log(`✅ Mô hình ${i} đã được lưu.`);
+        } else {
+            console.log(`❌ Không lưu mô hình ${i}.`);
+        }
     }
 }
 
-
-
-
-build()
+// ------------------- Chạy -------------------
+build();

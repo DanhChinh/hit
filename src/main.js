@@ -5,7 +5,7 @@ function sendMessageToGame(b, sid, eid) {
     return 0;
   }
   let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
-  addMessage(`${b} ->${eid}` , "player")
+  addMessage(`${b} ->${eid}`, "player")
 
   socket.send(message);
 }
@@ -18,7 +18,7 @@ var MESSAGE_WS = {
     "",
     { agentId: "1", accessToken: accessToken, reconnect: false },
   ],
-  
+
   info: ["6", "MiniGame2", "taixiu_live_gateway_plugin", { cmd: 15000 }],
   result: (counter) => ["7", "MiniGame2", "1", counter],
   bet: (b, sid, eid) => [
@@ -57,7 +57,7 @@ var sendInterval;
 var counter_send = 0;
 var socket;
 var is_betting = false;
-var is_bet_success  = false;
+var is_bet_success = false;
 var initRecord = (
   sid = undefined,
   progress = [],
@@ -84,10 +84,10 @@ function socket_connect() {
       //betting
       if (mgs.cmd === 15007 && is_betting) {
         record.progress.push(JSON.parse(JSON.stringify(mgs.bs)));
-        
+
         if (record.progress.length === 40) {
-          prd = await predict(JSON.parse(JSON.stringify(record.progress)));
-          sendMessageToGame(slider.value, record.sid, prd);
+          [prd, value] = await predict(JSON.parse(JSON.stringify(record.progress)));
+          sendMessageToGame(slider.value * value, record.sid, prd);
           addMessage(`${prd}`, "bot");
         }
         return;
@@ -103,7 +103,7 @@ function socket_connect() {
         let rs = mgs.d1 + mgs.d2 + mgs.d3;
         addMessage(`${rs}`, "server")
         rs = rs > 10 ? 1 : 2;
-        checkPrd(prd, rs);
+        checkPrd(prd, rs, value);
         return;
       }
       //start
@@ -157,24 +157,14 @@ function socket_connect() {
 var is_true = 0;
 var is_false = 0;
 var prd = undefined;
-function checkPrd(prd, rs) {
-  if (prd === undefined) {
+var value = 0;
+function checkPrd(prd, rs, value) {
+  if (prd === undefined || value === 0) {
     return;
   }
-  let prd_string  = prd ==1?"<":">";
-  let element = document.createElement("div");
-  element.classList.add("round");
-  if (prd === rs) {
-    is_true += 1;
-    element.classList.add("bg_green");
-    element.innerText = `${is_true}${prd_string}`;
-  } else {
-    is_false += 1;
-    element.classList.add("bg_red");
-    element.innerText = `${is_false}${prd_string}`;
+  let reward = value;
+  if (prd != rs) {
+    reward *= -1
   }
-  if(is_bet_success){
-    element.classList.add("is_bet_success")
-  }
-  DOM_history.appendChild(element);
+  addData(reward)
 }

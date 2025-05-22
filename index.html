@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>x_project</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script>
   <link rel="stylesheet" href="./src/style.css">
 </head>
 
 <body>
-  <div class="history" id="DOM_history"></div>
+  <div id="echart"></div>
   <div id="form_controll" class="container">
     <div>
       <span id="valueDisplay">100000</span>
@@ -78,6 +79,7 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     }
   </script>
+  <script src="./src/echart.js"></script>
   <script src="./src/main.js"></script>
   <script src="./src/remote.js"></script>
 
