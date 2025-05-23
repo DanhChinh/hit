@@ -38,8 +38,9 @@ async function predict(progress) {
     for(let model of MODELS){
         const output = model.predict(inputTensor); 
         const value = (await output.data())[0];
-        if(value > 0.505){value1+=1}
-        if(value < 0.495){value2+=1}
+        const alpha = 0.035
+        if(value > (0.5 +  alpha)){value1+=1}
+        if(value < (0.5 - alpha)){value2+=1}
     }
     addMessage(`${value1} ${value2}`, "bot")
     if(value1>value2){
