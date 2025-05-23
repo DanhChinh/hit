@@ -81,7 +81,7 @@ function handleProgress(progress_i) {
         const d_bc_1 = curr[1].bc - prev[1].bc;
 
         // Thêm kết quả vào mảng row
-        row.push(curr[1].bc, curr[1].v, curr[0].bc, curr[0].v, d_v_0, d_v_1, d_bc_0, d_bc_1);
+        row.push(curr[1].bc, curr[1].v, curr[0].bc, curr[0].v, d_v_0, d_v_1, d_bc_0, d_bc_1, curr[1].bc- curr[0].bc, curr[1].v, curr[0].v);
     }
 
     return row;
@@ -178,7 +178,7 @@ async function build() {
     // Khởi tạo mô hình một lần duy nhất
     const model = tf.sequential();
     model.add(tf.layers.dense({
-        units: 128, 
+        units: 100, 
         activation: 'relu', 
         inputShape: [xs[0].length]
     }));
@@ -188,12 +188,16 @@ async function build() {
     
     // Lớp thứ hai
     model.add(tf.layers.dense({
-        units: 128, 
+        units: 18, 
         activation: 'relu'
+    }));
+        model.add(tf.layers.dense({
+        units: 2, 
+        activation: 'sigmoid'
     }));
     
     // Thêm lớp Dropout để giảm overfitting
-    model.add(tf.layers.dropout(0.2)); // 20% dropout
+    //model.add(tf.layers.dropout(0.2)); // 20% dropout
     
     // Lớp output, có thể là sigmoid hoặc softmax tùy vào loại bài toán
     model.add(tf.layers.dense({

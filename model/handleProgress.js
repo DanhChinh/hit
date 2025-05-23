@@ -24,7 +24,7 @@ function handleProgress(progress_i) {
         const d_bc_1 = curr[1].bc - prev[1].bc;
 
         // Thêm kết quả vào mảng row
-        row.push(curr[1].bc, curr[1].v, curr[0].bc, curr[0].v, d_v_0, d_v_1, d_bc_0, d_bc_1);
+        row.push(curr[1].bc, curr[1].v, curr[0].bc, curr[0].v, d_v_0, d_v_1, d_bc_0, d_bc_1, curr[1].bc- curr[0].bc, curr[1].v, curr[0].v);
     }
 
     return row;
@@ -44,7 +44,8 @@ async function predict(progress) {
     for(let model of MODELS){
         const output = model.predict(inputTensor); 
         const value = (await output.data())[0];
-        value >= 0.5 ? value1+=1 : value2+=1;
+        if(value > 0.505){value1+=1}
+        if(value < 0.495){value2+=1}
     }
     addMessage(`${value1} ${value2}`, "bot")
     if(value1>value2){

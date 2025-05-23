@@ -1,10 +1,7 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   margin: 0;
   /* background-image: linear-gradient(to top right, #edd0f7, #430149); */
 }
@@ -180,6 +177,9 @@ button:hover {
 }
 
 #echart{
-  width: 800px;
-  height: 500px;
+  min-width: 800px;
+  min-height: 500px;
+  position: fixed;
+  top: 10px;
+  left: 10px;
 }
