@@ -55,33 +55,29 @@ function ghiFile(arr, filename){
       console.log('Đã ghi mảng 2 chiều thành từng dòng!');
     });
 }
+
+
 function handleProgress(progress_i) {
+    function get_percent(a, b){
+        return parseFloat((a/(a+b)).toFixed(5))
+    }
     // Lấy một phần dữ liệu từ chỉ số 10 đến 40
-    const prg = progress_i.slice(10, 40);
+    const prg = progress_i.slice(30, 40);
     const row = [];
 
-    for (let i = 1; i < prg.length; i++) {
+    for (let i = 0; i < prg.length; i++) {
         const curr = prg[i];
-        const prev = prg[i - 1];
 
         // Kiểm tra dữ liệu hợp lệ và đảm bảo rằng tất cả các giá trị là số
         if (
-            !curr || !prev || 
-            !isValidData(curr[0]) || !isValidData(curr[1]) || 
-            !isValidData(prev[0]) || !isValidData(prev[1])
+            !curr || !isValidData(curr[0]) || !isValidData(curr[1]) 
         ) {
             console.warn(`⚠️ Dữ liệu không hợp lệ tại index ${i}`, curr);
             continue;  // Bỏ qua dữ liệu không hợp lệ và tiếp tục với dữ liệu sau
         }
 
-        // Tính toán sự khác biệt giữa các giá trị
-        const d_v_0 = curr[0].v - prev[0].v;
-        const d_v_1 = curr[1].v - prev[1].v;
-        const d_bc_0 = curr[0].bc - prev[0].bc;
-        const d_bc_1 = curr[1].bc - prev[1].bc;
-
-        // Thêm kết quả vào mảng row
-        row.push(curr[1].bc, curr[1].v, curr[0].bc, curr[0].v, d_v_0, d_v_1, d_bc_0, d_bc_1, curr[1].bc- curr[0].bc, curr[1].v, curr[0].v);
+        row.push(get_percent(curr[0].v, curr[1].v))
+        row.push(get_percent(curr[0].bc, curr[1].bc))
     }
 
     return row;
@@ -178,26 +174,23 @@ async function build() {
     // Khởi tạo mô hình một lần duy nhất
     const model = tf.sequential();
     model.add(tf.layers.dense({
-        units: 100, 
+        units: 128, 
         activation: 'relu', 
         inputShape: [xs[0].length]
     }));
-    
-    // Thêm lớp Batch Normalization để ổn định huấn luyện
-    model.add(tf.layers.batchNormalization());
-    
-    // Lớp thứ hai
-    model.add(tf.layers.dense({
+        model.add(tf.layers.dense({
         units: 18, 
         activation: 'relu'
     }));
-        model.add(tf.layers.dense({
+            model.add(tf.layers.dense({
         units: 2, 
-        activation: 'sigmoid'
+        activation: 'relu'
     }));
+
+    model.add(tf.layers.batchNormalization());
     
     // Thêm lớp Dropout để giảm overfitting
-    //model.add(tf.layers.dropout(0.2)); // 20% dropout
+    // model.add(tf.layers.dropout(0.1)); // 20% dropout
     
     // Lớp output, có thể là sigmoid hoặc softmax tùy vào loại bài toán
     model.add(tf.layers.dense({
@@ -233,9 +226,9 @@ async function build() {
 
         // Huấn luyện mô hình với mỗi batch dữ liệu
         await model.fit(inputTensor, labelTensor, {
-            epochs: 50,  // Giảm số epoch xuống để tránh overfitting, bạn có thể thử điều chỉnh
-            batchSize: randomInt(10, 100),  // Giữ batchSize ngẫu nhiên
-            validationSplit: 0.2,  // Dùng 20% dữ liệu để xác nhận
+            epochs: 100,  // Giảm số epoch xuống để tránh overfitting, bạn có thể thử điều chỉnh
+            batchSize: 10,  // Giữ batchSize ngẫu nhiên
+            validationSplit: 0.3,  // Dùng 20% dữ liệu để xác nhận
             callbacks: {
                 onEpochEnd: (epoch, logs) => {
                     console.log(`Epoch ${epoch}: loss = ${logs.loss}, acc = ${logs.acc || logs.accuracy}`);
