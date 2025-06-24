@@ -29,3 +29,21 @@ const valueDisplay = document.getElementById("valueDisplay");
 slider.addEventListener("input", function () {
   valueDisplay.textContent = slider.value;
 });
+
+
+var socket_io = undefined;
+
+DOM_connectPyserver.onclick = (e) => {
+  socket_io = io("http://localhost:5000");
+
+  socket_io.on("connect", () => {
+    console.log("✅ Đã kết nối tới server!");
+    e.target.textContent = "Connected" ;
+    e.target.style.backgroundColor = "green" ;
+  });
+
+  // socket_io.on("disconnect", () => {
+  //   log("❌ Mất kết nối với server");
+  // });
+
+};

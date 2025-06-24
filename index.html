@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Biểu đồ Nến Nhật Cập Nhật Trực Tiếp</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script>
   <link rel="stylesheet" href="./src/style.css">
@@ -28,6 +29,7 @@
     <button id="DOM_isPlay">Play</button>
     <button id="DOM_isConnectGame">Connect</button>
     <button id="DOM_loadModel">Load Model</button>
+    <button id="DOM_connectPyserver">Connect Pyserver</button>
   </div>
 
   <div id="chat-container">

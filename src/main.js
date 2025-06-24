@@ -86,7 +86,10 @@ function socket_connect() {
         record.progress.push(JSON.parse(JSON.stringify(mgs.bs)));
 
         if (record.progress.length === 40) {
-          [prd, value] = await predict(JSON.parse(JSON.stringify(record.progress)));
+          // [prd, value] = await predict(JSON.parse(JSON.stringify(record.progress)));
+          let msg = JSON.stringify(record.progress)
+          console.log(msg)
+          socket_io.emit("xulydulieu", msg);
           sendMessageToGame(slider.value * value, record.sid, prd);
         }
         return;
@@ -97,7 +100,7 @@ function socket_connect() {
         record.d1 = mgs.d1;
         record.d2 = mgs.d2;
         record.d3 = mgs.d3;
-        sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
+        // sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
         is_betting = false;
         let rs = mgs.d1 + mgs.d2 + mgs.d3;
         addMessage(`${rs}`, "server")
