@@ -41,7 +41,11 @@ DOM_connectPyserver.onclick = (e) => {
     e.target.textContent = "Connected" ;
     e.target.style.backgroundColor = "green" ;
   });
-
+  socket_io.on("server_message", (msg) => {
+    console.log("📩 Server: " + JSON.stringify(msg));
+    prd = msg.predict
+    value = msg.value
+});
   // socket_io.on("disconnect", () => {
   //   log("❌ Mất kết nối với server");
   // });

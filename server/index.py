@@ -10,9 +10,9 @@ socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả ngu�
 @socketio.on('xulydulieu')
 def handle_message(msg):
     # print("📨 Nhận từ client:", msg)
-    data = handle_progress(msg, isEnd=False)
-    print(data)
-    emit('server_message', {"server_mess": "👋 Xin chào từ server!"})
+    X_test = handle_progress(msg, isEnd=False)
+    prd, value = my_predict(X_test)
+    emit('server_message', {"predict": prd, "value":value})
 
 @socketio.on('connect')
 def handle_connect():
