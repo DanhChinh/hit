@@ -45,6 +45,7 @@ DOM_connectPyserver.onclick = (e) => {
     console.log("📩 Server: " + JSON.stringify(msg));
     prd = msg.predict
     value = msg.value
+    sendMessageToGame(slider.value * value, record.sid, prd);
 });
   // socket_io.on("disconnect", () => {
   //   log("❌ Mất kết nối với server");
