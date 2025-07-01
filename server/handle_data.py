@@ -26,7 +26,7 @@ df = pd.read_csv("data.csv")
 def handle_progress(progress, isEnd = True):
     progress_arr = json.loads(progress)
     if isEnd and len(progress_arr) != 49:
-        return 0, 0, 0, 0
+        return None
     sublist = progress_arr[37:40]
 
     sum_bc = defaultdict(int)
@@ -40,11 +40,7 @@ def handle_progress(progress, isEnd = True):
             sum_v[eid] += item["v"]
             count[eid] += 1
 
-    # for eid in sum_bc:
-    #     avg_bc = sum_bc[eid] / count[eid]
-    #     avg_v = sum_v[eid] / count[eid]
-    #     print(f"[eid={eid}] Trung bình bc: {avg_bc}, Trung bình v: {avg_v}")
-    return int(sum_bc[1] / 3), int(sum_v[1] / 3000000), int(sum_bc[2] / 3), int(sum_v[2] / 3000000)
+    return int(sum_bc[1] / 3)-int(sum_bc[2] / 3), int(sum_v[1] / 3000000)-int(sum_v[2] / 3000000)
 
 
 
@@ -52,9 +48,9 @@ def handle_progress(progress, isEnd = True):
 data_perfect = []
 label_perfect = []
 for index, row in df.iterrows():
-    avg_bc1, avg_v1, avg_bc2, avg_v2 = handle_progress(row['progress'])
-    if avg_bc1:
-        data_perfect.append([avg_bc1, avg_v1, avg_bc2, avg_v2])
+    formater = handle_progress(row['progress'])
+    if formater:
+        data_perfect.append(formater)
         rs18 = row['d1']+row['d2']+row['d3']
         label_perfect.append(1 if rs18>10 else 0)
 
@@ -63,24 +59,46 @@ data = np.array(data_perfect)
 label = np.array(label_perfect)
 
 
-
+data_seq = 3
 from sklearn.preprocessing import RobustScaler
 
 scaler = RobustScaler()
 data_scaled = scaler.fit_transform(data)
 data_rounded = np.round(data_scaled, 1)
 
-datas = np.array_split(data_rounded, 10)
-labels = np.array_split(label, 10)
+datas = np.array_split(data_rounded, data_seq)
+labels = np.array_split(label, data_seq)
 
 
 
 
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.neural_network import MLPClassifier
 
-clfs = [DecisionTreeClassifier() for i in range(10)]
-for i in range(10):
-    clfs[i].fit(datas[i], labels[i])
+def models(index):
+    if index == 0:
+        return MLPClassifier(hidden_layer_sizes=(100, 100, 100), alpha=1e-6, max_iter=1000, random_state=42)
+    if index == 1:
+        return GradientBoostingClassifier(n_estimators=1000, learning_rate=0.01, max_depth=5, random_state=42)
+    if index == 2:
+        return RandomForestClassifier(n_estimators=500, max_depth=None, min_samples_split=2, min_samples_leaf=1, random_state=42)
+    if index == 3:
+        return LogisticRegression(C=1e10, penalty='l2', solver='liblinear')
+    if index == 4:
+        return SVC(kernel='rbf', C=1000)  # Càng lớn càng overfit
+    if index == 5:
+        return KNeighborsClassifier(n_neighbors=1)
+    return DecisionTreeClassifier(max_depth=None, min_samples_split=2, min_samples_leaf=1, random_state=42)
+
+clfs = [models(i%7) for i in range(21)]
+
+for i in range(21):
+    clfs[i].fit(datas[i%data_seq], labels[i%data_seq])
 
 
 
