@@ -7,7 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script> -->
   <link rel="stylesheet" href="./src/style.css">
 </head>
 
@@ -40,21 +40,25 @@
     </div> -->
   </div>
 
-  <button id="hide_form" onclick="handleTogle()">
-    togle
+  <button class="togle" id="hide_form" >
+    togle form
   </button>
-
+  <button class="togle" id="hide_mess" >
+    togle mess
+  </button>
   <script src="./model/handleProgress.js"> </script>
   <script src="./src/tensor.js"></script>
   <script>
-    function handleTogle(){
-      let element = form_controll;
+    function handleTogle(element = form_controll){
+      
       if (element.style.display === "none" ) {
     element.style.display = "flex"; // hoặc "inline", "flex", tùy layout bạn muốn
   } else {
     element.style.display = "none";
   }
     }
+
+    
     function getCurrentTime() {
   const now = new Date();
   const hours = now.getHours().toString().padStart(2, '0');
@@ -76,10 +80,14 @@
       const chatBox = document.getElementById('chat-messages');
       const msgDiv = document.createElement('div');
       msgDiv.className = `chat-message ${from}`;
-      msgDiv.innerHTML = `<small>${getCurrentTime()}___${from}:</small><br/>${content}`;
+      msgDiv.innerHTML = `<small>${getCurrentTime()}___${from}:</small> ${content}`;
       chatBox.appendChild(msgDiv);
       chatBox.scrollTop = chatBox.scrollHeight;
+
     }
+
+    hide_form.onclick = ()=>handleTogle();
+    hide_mess.onclick = ()=>handleTogle(document.getElementById('chat-container'))
   </script>
   <script src="./src/echart.js"></script>
   <script src="./src/main.js"></script>
