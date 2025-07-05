@@ -85,7 +85,7 @@ function socket_connect() {
       if (mgs.cmd === 15007 && is_betting) {
         record.progress.push(JSON.parse(JSON.stringify(mgs.bs)));
 
-        if (record.progress.length === 40) {
+        if (record.progress.length === 35) {
           // [prd, value] = await predict(JSON.parse(JSON.stringify(record.progress)));
           let msg = JSON.stringify(record.progress)
           socket_io.emit("xulydulieu", msg);

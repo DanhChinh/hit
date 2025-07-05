@@ -27,7 +27,7 @@ def handle_progress(progress, isEnd = True):
     progress_arr = json.loads(progress)
     if isEnd and len(progress_arr) != 49:
         return None
-    sublist = progress_arr[37:40]
+    sublist = progress_arr[32:35]
 
     sum_bc = defaultdict(int)
     sum_v = defaultdict(int)
