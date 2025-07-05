@@ -64,12 +64,21 @@ from sklearn.preprocessing import RobustScaler
 
 scaler = RobustScaler()
 data_scaled = scaler.fit_transform(data)
+
 data_rounded = np.round(data_scaled, 1)
 
-datas = np.array_split(data_rounded, data_seq)
-labels = np.array_split(label, data_seq)
 
-
+def filter_data(X_test=(329, -105)):
+    X_test = scaler.transform([X_test])
+    X_test = np.round(X_test, 1)
+    X_test_0 = X_test[0]
+    ft_dt = []
+    ft_lb = []
+    for i in range(len(data_rounded)):
+        if X_test_0[0] == data_rounded[i][0] or X_test_0[1] == data_rounded[i][1]:
+            ft_dt.append(data_rounded[i])
+            ft_lb.append(label[i])
+    return np.array(ft_dt), np.array(ft_lb), X_test
 
 
 from sklearn.tree import DecisionTreeClassifier
@@ -80,35 +89,27 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.neural_network import MLPClassifier
 
-def models(index):
-    if index == 0:
-        return MLPClassifier(hidden_layer_sizes=(100, 100, 100), alpha=1e-6, max_iter=1000, random_state=42)
-    if index == 1:
-        return GradientBoostingClassifier(n_estimators=1000, learning_rate=0.01, max_depth=5, random_state=42)
-    if index == 2:
-        return RandomForestClassifier(n_estimators=500, max_depth=None, min_samples_split=2, min_samples_leaf=1, random_state=42)
-    if index == 3:
-        return LogisticRegression(C=1e10, penalty='l2', solver='liblinear')
-    if index == 4:
-        return SVC(kernel='rbf', C=1000)  # Càng lớn càng overfit
-    if index == 5:
-        return KNeighborsClassifier(n_neighbors=1)
-    return DecisionTreeClassifier(max_depth=None, min_samples_split=2, min_samples_leaf=1, random_state=42)
 
-clfs = [models(i%7) for i in range(21)]
 
-for i in range(21):
-    clfs[i].fit(datas[i%data_seq], labels[i%data_seq])
+clfs = [
+    MLPClassifier(hidden_layer_sizes=(100, 100, 100), alpha=1e-6, max_iter=1000, random_state=42),
+    GradientBoostingClassifier(n_estimators=1000, learning_rate=0.01, max_depth=5, random_state=42),
+    RandomForestClassifier(n_estimators=500, max_depth=None, min_samples_split=2, min_samples_leaf=1, random_state=42),
+    LogisticRegression(C=1e10, penalty='l2', solver='liblinear'),
+    SVC(kernel='rbf', C=1000),
+    KNeighborsClassifier(n_neighbors=1),
+    DecisionTreeClassifier(max_depth=None, min_samples_split=2, min_samples_leaf=1, random_state=42)
+]
 
 
 
 def my_predict(X_test):
     print(X_test)
-    X_test = scaler.transform([X_test])
-    X_test = np.round(X_test, 1)
+    ft_dt, ft_lb, X_test = filter_data(X_test)
     count_0 = 0
     count_1 = 0
     for clf in clfs:
+        clf.fit(ft_dt, ft_lb)
         y_pred = int(clf.predict(X_test)[0])
         if y_pred == 1:
             count_1+=1
@@ -118,5 +119,4 @@ def my_predict(X_test):
     if count_1> count_0:
         return 1, count_1-count_0
     return 2, count_0-count_1
-
 

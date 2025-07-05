@@ -1,4 +1,4 @@
-const rawData = [0];
+﻿const rawData = [0];
 const candleData = [];
 const labels = [];
 
@@ -67,8 +67,8 @@ function addData(newChange) {
     labels.push(getCurrentTime());
 
     chart.setOption({
-        xAxis: { data: labels.slice(-30) },
-        series: [{ data: candleData.slice(-30) }]
+        xAxis: { data: labels.slice(-100) },
+        series: [{ data: candleData.slice(-100) }]
     });
 }
 function getCurrentTime() {
