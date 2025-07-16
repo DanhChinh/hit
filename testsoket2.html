@@ -18,14 +18,64 @@
       border: 1px solid #ccc;
       padding: 10px;
     }
+    #other{
+        display: none;
+    }
+    .nav {
+      cursor: pointer;
+      display: inline-block;
+      padding: 10px;
+      background-color: #eee;
+      margin-right: 5px;
+    }
+
+    .nav:hover {
+      background-color: #ddd;
+    }
+
+    .content-section {
+      display: none;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+    }
   </style>
 </head>
 <body>
   <h2>🎯 Kết quả phân loại từ mô hình ML</h2>
   <button id="connectBtn">Kết nối và nhận dữ liệu</button>
-  <div id="charts-container"></div>
+  <div >
+    <ul>
+        <li class="nav" value="charts-container">chart</li>
+        <li class="nav" value="other">other</li>
+    </ul>
+  </div>
+  <div id="charts-container" class="content-section">
+    Đây là nội dung biểu đồ (charts).
+  </div>
+
+  <div id="other" class="content-section">
+    Đây là nội dung khác (other).
+  </div>
 
   <script>
+        const navItems = document.querySelectorAll('.nav');
+    const sections = document.querySelectorAll('.content-section');
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const targetId = item.getAttribute('value');
+
+        sections.forEach(section => {
+          if (section.id === targetId) {
+            section.style.display = 'block';
+          } else {
+            section.style.display = 'none';
+          }
+        });
+      });
+    });
+
     const socket = io("http://localhost:5000"); // Đảm bảo trùng cổng server Flask
     const connectBtn = document.getElementById("connectBtn");
     const chartsContainer = document.getElementById("charts-container");
