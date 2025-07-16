@@ -47,8 +47,64 @@ DOM_connectPyserver.onclick = (e) => {
     value = msg.value
     sendMessageToGame(slider.value * value, record.sid, prd);
 });
-  // socket_io.on("disconnect", () => {
-  //   log("❌ Mất kết nối với server");
-  // });
+socket_io.on("train_map", (results) => {
+  console.log("📩 Nhận dữ liệu từ server:", results);
+  const chartsContainer = document.getElementById("echart");
+  chartsContainer.innerHTML = ""; // clear cũ
+
+  Object.entries(results).forEach(([modelName, data]) => {
+    const scatterId = `scatter-${modelName}`;
+    const cumsumId = `cumsum-${modelName}`;
+
+    // Tạo 2 khung
+    chartsContainer.innerHTML += `
+      <div class="chart-box" id="${scatterId}"></div>
+      <div class="chart-box" id="${cumsumId}"></div>
+    `;
+
+    // ---------------- Scatter ----------------
+    const scatterChart = echarts.init(document.getElementById(scatterId));
+    const scatterOption = {
+      title: { text: `${modelName} - Scatter (Acc: ${data.accuracy}%)` },
+      xAxis: { name: "Dim 1" },
+      yAxis: { name: "Dim 2" },
+      tooltip: {
+        formatter: (p) => `Pred: ${p.data[2]}<br>True: ${p.data[3]}`
+      },
+      series: [{
+        symbolSize: 8,
+        data: data.scatter.map(p => [p.x, p.y, p.pred, p.true]),
+        type: 'scatter',
+        encode: { tooltip: [2, 3] },
+        itemStyle: {
+          color: (params) => {
+            return params.data[2] === params.data[3] ? 'green' : 'red';
+          }
+        }
+      }]
+    };
+    scatterChart.setOption(scatterOption);
+
+    // ---------------- Cumulative ----------------
+    const cumsumChart = echarts.init(document.getElementById(cumsumId));
+    const cumsumOption = {
+      title: { text: `${modelName} - Cộng dồn đúng/sai` },
+      xAxis: { type: 'category', name: "Mẫu" },
+      yAxis: { type: 'value', name: "Tổng điểm" },
+      tooltip: { trigger: 'axis' },
+      series: [{
+        data: data.cumsum,
+        type: 'line',
+        smooth: true,
+        lineStyle: { color: 'blue' },
+        markLine: {
+          data: [{ yAxis: 0 }],
+          lineStyle: { type: 'dashed', color: 'gray' }
+        }
+      }]
+    };
+    cumsumChart.setOption(cumsumOption);
+  });
+});
 
 };

@@ -189,3 +189,12 @@ button:hover {
   top: 10px;
   left: 10px;
 }
+
+
+#charts_container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  width: 1000px;
+  height: 500px;
+}

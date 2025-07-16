@@ -1,23 +1,28 @@
 from flask import Flask
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
-import os
-from handle_data import *
+import os, json
+from qmain import *
 app = Flask(__name__)
 CORS(app)  # Bật CORS cho toàn bộ ứng dụng
 socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả nguồn
 
 @socketio.on('xulydulieu')
 def handle_message(msg):
-    # print("📨 Nhận từ client:", msg)
-    X_test = handle_progress(msg, isEnd=False)
-    prd, value = my_predict(X_test)
-    emit('server_message', {"predict": prd, "value":value})
+
+    x_new_raw = handle_progress(msg, isEnd=False)
+    print(x_new_raw)
+    x_new_raw = is_pass_filtered(scaler, x_new_raw, X_filtered, y_filtered)
+    print(x_new_raw)
+
+    # prd, value = my_predict(X_test)
+    # emit('server_message', {"predict": prd, "value":value})
 
 @socketio.on('connect')
 def handle_connect():
     # os.system('cls' if os.name == 'nt' else 'clear')
     print('✅ Client connected')
+    emit('plot_data', plot_data)
 
 @socketio.on('disconnect')
 def handle_disconnect():

@@ -88,6 +88,7 @@ function socket_connect() {
         if (record.progress.length === 35) {
           // [prd, value] = await predict(JSON.parse(JSON.stringify(record.progress)));
           let msg = JSON.stringify(record.progress)
+          console.log(msg)
           socket_io.emit("xulydulieu", msg);
         }
         return;

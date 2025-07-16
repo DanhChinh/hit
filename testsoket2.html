@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ML Plot with ECharts</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5"></script>
+  <style>
+    #charts-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      padding: 20px;
+    }
+    .chart-box {
+      width: 45%;
+      height: 400px;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎯 Kết quả phân loại từ mô hình ML</h2>
+  <button id="connectBtn">Kết nối và nhận dữ liệu</button>
+  <div id="charts-container"></div>
+
+  <script>
+    const socket = io("http://localhost:5000"); // Đảm bảo trùng cổng server Flask
+    const connectBtn = document.getElementById("connectBtn");
+    const chartsContainer = document.getElementById("charts-container");
+
+    connectBtn.onclick = () => {
+      socket.emit("client_request_plot_data");
+    };
+
+    socket.on("plot_data", (results) => {
+      console.log("📩 Nhận dữ liệu từ server:", results);
+      chartsContainer.innerHTML = "";  // Clear cũ
+
+      // Bước 1: Tạo DOM trước
+      const chartDivs = [];
+      Object.entries(results).forEach(([modelName, data]) => {
+        const scatterId = `scatter-${modelName}`;
+        const cumsumId = `cumsum-${modelName}`;
+
+        chartsContainer.innerHTML += `
+          <div class="chart-box" id="${scatterId}"></div>
+          <div class="chart-box" id="${cumsumId}"></div>
+        `;
+
+        chartDivs.push({ modelName, scatterId, cumsumId, data });
+      });
+
+      // Bước 2: Sau khi DOM được render xong, mới khởi tạo ECharts
+      setTimeout(() => {
+        chartDivs.forEach(({ modelName, scatterId, cumsumId, data }) => {
+          // Scatter Chart
+          const scatterChart = echarts.init(document.getElementById(scatterId));
+          scatterChart.setOption({
+            title: { text: `${modelName} - Scatter (Acc: ${data.accuracy}%)` },
+            xAxis: { name: 'Dim 1' },
+            yAxis: { name: 'Dim 2' },
+            tooltip: {
+              formatter: (params) => {
+                const d = params.data;
+                return `Pred: ${d[2]}<br>True: ${d[3]}`;
+              }
+            },
+            series: [{
+              type: 'scatter',
+              symbolSize: 8,
+              data: data.scatter.map(p => [p.x, p.y, p.pred, p.true]),
+              itemStyle: {
+                color: (params) =>
+                  params.data[2] === params.data[3] ? '#4caf50' : '#f44336'
+              },
+              encode: { tooltip: [2, 3] }
+            }]
+          });
+
+          // Cumsum Chart
+          const cumsumChart = echarts.init(document.getElementById(cumsumId));
+          cumsumChart.setOption({
+            title: { text: `${modelName} - Cộng dồn đúng/sai` },
+            xAxis: { type: 'category', name: 'Sample' },
+            yAxis: { type: 'value', name: 'Tổng điểm' },
+            tooltip: { trigger: 'axis' },
+            series: [{
+              data: data.cumsum,
+              type: 'line',
+              smooth: true,
+              lineStyle: { color: '#2196f3' },
+              markLine: {
+                data: [{ yAxis: 0 }],
+                lineStyle: { type: 'dashed', color: '#aaa' }
+              }
+            }]
+          });
+        });
+      }, 50); // Delay 50ms để đảm bảo DOM sẵn sàng
+    });
+
+    socket.on("connect", () => {
+      console.log("✅ Đã kết nối tới server.");
+    });
+  </script>
+</body>
+</html>
