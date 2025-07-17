@@ -2,7 +2,7 @@ from flask import Flask
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import os, json
-from qmain import *
+from agl import *
 app = Flask(__name__)
 CORS(app)  # Bật CORS cho toàn bộ ứng dụng
 socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả nguồn
@@ -20,13 +20,14 @@ def handle_message(msg):
 
 @socketio.on('connect')
 def handle_connect():
-    # os.system('cls' if os.name == 'nt' else 'clear')
     print('✅ Client connected')
-    emit('plot_data', plot_data)
 
+@socketio.on('getAgl')
+def handle_getAgl():
+    load_polot_data()
+    emit('agl', plot_data)
 @socketio.on('disconnect')
 def handle_disconnect():
-    # os.system('cls' if os.name == 'nt' else 'clear')
     print('❌ Client disconnected')
 
 if __name__ == '__main__':

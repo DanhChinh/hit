@@ -109,9 +109,9 @@ def predict_new_point(x_new, scaler, classifiers, X_train, X_test, y_train):
 
 
 #thu x,y->split-> filter(x_train)->filter(x_test)->percent
-scaler, X_filtered, y_filtered = filtered()
-X_train, X_test, y_train, y_test = train_test_split(X_filtered, y_filtered, test_size=0.2)
 
+
+scaler, X_filtered, y_filtered = filtered()
 classifiers = {
     "KNN": KNeighborsClassifier(n_neighbors=5),
     "DecisionTree": DecisionTreeClassifier(),
@@ -119,33 +119,34 @@ classifiers = {
 }
 
 plot_data = {}
+def load_polot_data():
+    X_train, X_test, y_train, y_test = train_test_split(X_filtered, y_filtered, test_size=0.2)
+    for idx, (name, model) in enumerate(classifiers.items()):
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        acc = accuracy_score(y_test, y_pred) * 100
+        print(f"✅ {name} - Accuracy: {acc:.2f}%")
 
-for idx, (name, model) in enumerate(classifiers.items()):
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    acc = accuracy_score(y_test, y_pred) * 100
-    print(f"✅ {name} - Accuracy: {acc:.2f}%")
+        # Danh sách điểm để scatter
+        scatter_points = []
+        for i in range(len(X_test)):
+            scatter_points.append({
+                "x": float(X_test[i][0]),
+                "y": float(X_test[i][1]),
+                "pred": int(y_pred[i]),
+                "true": int(y_test[i])
+            })
 
-    # Danh sách điểm để scatter
-    scatter_points = []
-    for i in range(len(X_test)):
-        scatter_points.append({
-            "x": float(X_test[i][0]),
-            "y": float(X_test[i][1]),
-            "pred": int(y_pred[i]),
-            "true": int(y_test[i])
-        })
+        # Cộng dồn điểm đúng/sai
+        point = np.where(y_pred == y_test, 1, -1)
+        cum_point = np.cumsum(point).tolist()  # chuyển sang list JSON-compatible
 
-    # Cộng dồn điểm đúng/sai
-    point = np.where(y_pred == y_test, 1, -1)
-    cum_point = np.cumsum(point).tolist()  # chuyển sang list JSON-compatible
-
-    # Ghi vào dict kết quả
-    plot_data[name] = {
-        "accuracy": round(acc, 2),
-        "scatter": scatter_points,
-        "cumsum": cum_point
-    }
+        # Ghi vào dict kết quả
+        plot_data[name] = {
+            "accuracy": round(acc, 2),
+            "scatter": scatter_points,
+            "cumsum": cum_point
+        }
 
 
 
