@@ -92,7 +92,7 @@ def filter_reliable_predictions(X_train, x_pred_array, y_pred_array, knn, thresh
     """
 
     # 1. Tính ngưỡng khoảng cách tin cậy từ X_train
-    nn = NearestNeighbors(n_neighbors=2)
+    nn = NearestNeighbors(n_neighbors=9)
     nn.fit(X_train)
     distances_all, _ = nn.kneighbors(X_train)
     nearest_distances = distances_all[:, 1]  # Bỏ khoảng cách với chính nó
