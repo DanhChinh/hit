@@ -2,6 +2,7 @@ var isPlay = false;
 var isConnectGame = false;
 var isConnectMyServer = false;
 var accessToken = "";
+var isReverse = false;
 var accessTokenStorege = localStorage.getItem("accessToken");
 DOM_accessToken.value = accessTokenStorege;
 DOM_isPlay.onclick = (e) => {
@@ -29,8 +30,11 @@ const valueDisplay = document.getElementById("valueDisplay");
 slider.addEventListener("input", function () {
   valueDisplay.textContent = slider.value;
 });
-
-
+DOM_reverse.onclick = (e) => {
+  isReverse = !isReverse;
+  e.target.textContent = isReverse ? "Reverse..." : "no Reverse";
+  e.target.style.backgroundColor = isReverse ? "black" : "blue";
+};
 var socket_io = undefined;
 
 DOM_connectPyserver.onclick = (e) => {
@@ -44,6 +48,9 @@ DOM_connectPyserver.onclick = (e) => {
   socket_io.on("server_message", (msg) => {
     console.log("📩 Server: " + JSON.stringify(msg));
     prd = msg.predict
+    if(isReverse){
+      prd = prd == 1? 2: 1;
+    }
     value = msg.value
     sendMessageToGame(slider.value * value, record.sid, prd);
 });

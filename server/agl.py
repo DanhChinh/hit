@@ -7,7 +7,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.decomposition import PCA
 
-from env import filtered, filter_reliable_predictions, make_data
+from env import filtered, filter_reliable_predictions, make_data, handle_progress
 # ---------------- Hàm vẽ kết quả phân loại ----------------
 def plot_per_classifier(x_train, x_test, y_train, y_test, classifiers):
     if x_train.shape[1] > 2:
@@ -108,6 +108,28 @@ def predict_new_point(x_new, scaler, classifiers, x_train, x_test, y_train):
 
 
 #thu x,y->split-> filter(x_train)->filter(x_test)->percent
+def my_predict(msg):
+    x_pred = handle_progress(msg, isEnd=False)
+    x_pred = scaler.transform([x_pred])
+    x_pred = np.round(x_pred, 1)
+    if x_train is None:
+        load_polot_data()
+
+    y_pred, _, _ = filter_reliable_predictions(x_train, x_pred, [0], knn)
+    if len(y_pred)==0:
+        return 1, 0
+    c1 = 0
+    c2 = 0
+    for idx, (name, model) in enumerate(classifiers.items()):
+        y_pred = int(model.predict(x_pred)[0])
+        print(name, y_pred)
+        if y_pred == 1:
+            c1+=1
+        else:
+            c2+=1
+    if c1>c2:
+        return 1, c1-c2
+    return 2, c2-c1
 
 scaler, data, label= make_data()
 classifiers = {
@@ -117,7 +139,10 @@ classifiers = {
 }
 
 plot_data = {}
+x_train = None
+knn = None
 def load_polot_data():
+    global x_train, knn
     x_train, x_test, y_train, y_test = train_test_split(data, label, test_size=0.2)
     x_train, y_train, knn  = filtered(x_train, y_train, None)
     x_test, y_test, index = filter_reliable_predictions(x_train, x_test, y_test, knn)

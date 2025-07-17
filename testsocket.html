@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -54,107 +54,6 @@
         console.log(data);
       }
     };
-  </script>
-</body>
-</html> -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Biểu đồ dự đoán ML</title>
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/echarts@5"></script>
-  <style>
-    #charts-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-    }
-    .chart-box {
-      width: 45%;
-      height: 400px;
-    }
-  </style>
-</head>
-<body>
-  <h2>🔗 Kết nối tới Flask-SocketIO để nhận kết quả ML</h2>
-  <button id="connectBtn">Kết nối server</button>
-
-  <div id="charts-container"></div>
-
-  <script>
-    const socket = io("http://localhost:5000");
-    const connectBtn = document.getElementById("connectBtn");
-
-
-    connectBtn.onclick = () => {
-      socket.emit("client_request_plot_data");
-    };
-
-    socket.on("connect", () => {
-      console.log("✅ Đã kết nối tới server!");
-    });
-
-    socket.on("plot_data", (results) => {
-      console.log("📩 Nhận dữ liệu từ server:", results);
-      const chartsContainer = document.getElementById("charts-container");
-      console.log(chartsContainer)
-      chartsContainer.innerHTML = ""; // clear cũ
-
-      Object.entries(results).forEach(([modelName, data]) => {
-        const scatterId = `scatter-${modelName}`;
-        const cumsumId = `cumsum-${modelName}`;
-
-        // Tạo 2 khung
-        chartsContainer.innerHTML += `
-          <div class="chart-box" id="${scatterId}"></div>
-          <div class="chart-box" id="${cumsumId}"></div>
-        `;
-
-        // ---------------- Scatter ----------------
-        const scatterChart = echarts.init(document.getElementById(scatterId));
-        const scatterOption = {
-          title: { text: `${modelName} - Scatter (Acc: ${data.accuracy}%)` },
-          xAxis: { name: "Dim 1" },
-          yAxis: { name: "Dim 2" },
-          tooltip: {
-            formatter: (p) => `Pred: ${p.data[2]}<br>True: ${p.data[3]}`
-          },
-          series: [{
-            symbolSize: 8,
-            data: data.scatter.map(p => [p.x, p.y, p.pred, p.true]),
-            type: 'scatter',
-            encode: { tooltip: [2, 3] },
-            itemStyle: {
-              color: (params) => {
-                return params.data[2] === params.data[3] ? 'green' : 'red';
-              }
-            }
-          }]
-        };
-        scatterChart.setOption(scatterOption);
-
-        // ---------------- Cumulative ----------------
-        const cumsumChart = echarts.init(document.getElementById(cumsumId));
-        const cumsumOption = {
-          title: { text: `${modelName} - Cộng dồn đúng/sai` },
-          xAxis: { type: 'category', name: "Mẫu" },
-          yAxis: { type: 'value', name: "Tổng điểm" },
-          tooltip: { trigger: 'axis' },
-          series: [{
-            data: data.cumsum,
-            type: 'line',
-            smooth: true,
-            lineStyle: { color: 'blue' },
-            markLine: {
-              data: [{ yAxis: 0 }],
-              lineStyle: { type: 'dashed', color: 'gray' }
-            }
-          }]
-        };
-        cumsumChart.setOption(cumsumOption);
-      });
-    });
   </script>
 </body>
 </html>
