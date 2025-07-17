@@ -15,7 +15,7 @@ def handle_message(msg):
     x_new_raw = is_pass_filtered(scaler, x_new_raw, X_filtered, y_filtered)
     print(x_new_raw)
 
-    # prd, value = my_predict(X_test)
+    # prd, value = my_predict(x_test)
     # emit('server_message', {"predict": prd, "value":value})
 
 @socketio.on('connect')

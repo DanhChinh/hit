@@ -31,10 +31,10 @@ def make_data():
     data = np.array(data_perfect)
     label = np.array(label_perfect)
 
-    # scaler = RobustScaler()
-    # data_scaled = scaler.fit_transform(data)
-    # data = np.round(data, 1)
-    return data, label
+    scaler = RobustScaler()
+    data = scaler.fit_transform(data)
+    data = np.round(data, 1)
+    return scaler, data, label
 
 def split_array(arr, ratio=0.7, shuffle=False):
     """
@@ -56,75 +56,74 @@ def split_array(arr, ratio=0.7, shuffle=False):
     split_idx = int(len(arr) * ratio)
     return arr[:split_idx], arr[split_idx:]
 
-
-def filtered():
-    X, y = make_data()
-    scaler = RobustScaler()
-    X = scaler.fit_transform(X) 
-    knn = KNeighborsClassifier(n_neighbors=8)
-    knn.fit(X, y)
+#return model
+def filtered(X,y,knn ):
+    if knn is None:
+        knn = KNeighborsClassifier(n_neighbors=8)
+        knn.fit(X, y)
     y_pred = knn.predict(X)
 
     # Chỉ giữ những mẫu dự đoán đúng
     mask = y_pred == y
     X_filtered = X[mask]
     y_filtered = y[mask]
-    return scaler, X_filtered, y_filtered
+    return X_filtered, y_filtered, knn
 
 
 
+from sklearn.neighbors import NearestNeighbors
+import numpy as np
 
-def is_pass_filtered(scaler, x_new_raw, X_filtered, y_filtered, k=8, threshold_factor=2.0):
+def filter_reliable_predictions(X_train, x_pred_array, y_pred_array, knn, threshold_factor=2.0):
     """
-    Kiểm tra xem một mẫu mới có 'đáng tin' hay không dựa vào khoảng cách đến hàng xóm gần nhất.
-    
+    Lọc các mẫu đáng tin cậy dựa trên khoảng cách tới tập huấn luyện.
+
     Args:
-        scaler: Bộ chuẩn hóa đã được huấn luyện (RobustScaler, v.v.)
-        x_new_raw: Mẫu mới (dạng list hoặc array chưa scale)
-        X_filtered: Dữ liệu đã được lọc (được scale)
-        y_filtered: Nhãn tương ứng
-        k: Số lượng hàng xóm (default: 8)
-        threshold_factor: Hệ số nhân cho std khi xác định ngưỡng
-    
+        X_train (ndarray): Tập huấn luyện (n_samples_train, n_features).
+        x_pred_array (ndarray): Tập mẫu cần lọc (n_samples_pred, n_features).
+        y_pred_array (ndarray or list): Nhãn dự đoán ứng với từng dòng trong x_pred_array.
+        knn (KNeighborsClassifier): Mô hình KNN đã huấn luyện.
+        threshold_factor (float): Hệ số nhân với std để xác định ngưỡng.
+
     Returns:
-        (label, distance, threshold, is_reliable): tuple
+        filtered_x (ndarray): Các mẫu đầu vào đã qua lọc.
+        filtered_y (ndarray): Nhãn dự đoán tương ứng.
+        filtered_indices (list[int]): Vị trí ban đầu trong x_pred_array của các mẫu được giữ lại.
     """
 
-    # 1. Train lại mô hình KNN
-    knn_filtered = KNeighborsClassifier(n_neighbors=k)
-    knn_filtered.fit(X_filtered, y_filtered)
-
-    # 2. Chuẩn hóa mẫu mới
-    x_new_scaled = scaler.transform([x_new_raw])
-
-    # 3. Dự đoán nhãn
-    y_new_pred = knn_filtered.predict(x_new_scaled)[0]
-
-    # 4. Tính ngưỡng khoảng cách tự động
-    nn = NearestNeighbors(n_neighbors=2)  # n=2 để bỏ chính nó
-    nn.fit(X_filtered)
-    distances_all, _ = nn.kneighbors(X_filtered)
-    nearest_distances = distances_all[:, 1]  # khoảng cách đến hàng xóm gần nhất (bỏ chính nó)
+    # 1. Tính ngưỡng khoảng cách tin cậy từ X_train
+    nn = NearestNeighbors(n_neighbors=2)
+    nn.fit(X_train)
+    distances_all, _ = nn.kneighbors(X_train)
+    nearest_distances = distances_all[:, 1]  # Bỏ khoảng cách với chính nó
 
     mean_dist = nearest_distances.mean()
     std_dist = nearest_distances.std()
     threshold = mean_dist + threshold_factor * std_dist
 
-    # 5. Tính khoảng cách của mẫu mới đến hàng xóm gần nhất
-    distances_new, _ = knn_filtered.kneighbors(x_new_scaled)
-    distance_to_nearest = distances_new[0][0]
-
-    is_reliable = distance_to_nearest <= threshold
-
-    print(f"📌 Mẫu mới (scaled): {x_new_scaled}")
-    print(f"✅ Nhãn dự đoán: {y_new_pred}")
-    print(f"📏 Khoảng cách đến hàng xóm gần nhất: {distance_to_nearest:.4f}")
     print(f"📊 Ngưỡng khoảng cách tin cậy (auto): {threshold:.4f}")
-    if not is_reliable:
-        print("⚠️ Mẫu có thể không đáng tin (quá xa tập tin cậy)")
-        return None
 
-    return y_new_pred
+    # 2. Tính khoảng cách mẫu mới đến hàng xóm gần nhất trong X_train
+    distances_new, _ = nn.kneighbors(x_pred_array)
+    distance_to_nearest = distances_new[:, 0]
+
+    # 3. Lọc ra các mẫu đáng tin cậy
+    filtered_x = []
+    filtered_y = []
+    filtered_indices = []
+
+    for i, dist in enumerate(distance_to_nearest):
+        if dist <= threshold:
+            filtered_x.append(x_pred_array[i])
+            filtered_y.append(y_pred_array[i])
+            filtered_indices.append(i)
+            print(f"✅ Mẫu {i} OK - Nhãn: {y_pred_array[i]}, Khoảng cách: {dist}")
+        else:
+            print(f"⚠️ Mẫu {i} bị loại - Khoảng cách: {dist:.4f}")
+
+    return np.array(filtered_x), np.array(filtered_y), filtered_indices
+
+
 
 
 
