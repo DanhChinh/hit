@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
@@ -143,7 +142,7 @@ x_train = None
 knn = None
 def load_polot_data():
     global x_train, knn
-    x_train, x_test, y_train, y_test = train_test_split(data, label, test_size=0.2)
+    x_train, x_test, y_train, y_test = train_test_split(data, label, test_size=0.019)
     x_train, y_train, knn  = filtered(x_train, y_train, None)
     x_test, y_test, index = filter_reliable_predictions(x_train, x_test, y_test, knn)
     # x_test, y_test, knn = filtered(x_test, y_test, knn)
