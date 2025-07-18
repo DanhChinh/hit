@@ -142,7 +142,12 @@ x_train = None
 knn = None
 def load_polot_data():
     global x_train, knn
-    x_train, x_test, y_train, y_test = train_test_split(data, label, test_size=0.019)
+    x_train, x_test, y_train, y_test = train_test_split(
+    data, label, 
+    train_size=0.19,
+    test_size=0.019,
+    shuffle=True,
+    stratify=label)
     x_train, y_train, knn  = filtered(x_train, y_train, None)
     x_test, y_test, index = filter_reliable_predictions(x_train, x_test, y_test, knn)
     # x_test, y_test, knn = filtered(x_test, y_test, knn)
