@@ -35,6 +35,10 @@
   <button id="reloadAgl">reload Agl</button>
   <div id="charts-container"></div>
 
+  <button class="model-button" value="KNN">KNN</button>
+  <button class="model-button" value="DecisionTree">DecisionTree</button>
+  <button class="model-button" value="RandomForest">RandomForest</button>
+  <div id="status-message" style="margin-top: 20px; color: blue;"></div>
   <script>
 
     const socket = io("http://localhost:5000"); // Đảm bảo trùng cổng server Flask
@@ -42,9 +46,23 @@
     const chartsContainer = document.getElementById("charts-container");
     socket.on("connect", () => {
       console.log("✅ Đã kết nối tới server.");
-      socket.emit('getAgl')
-    });
+      // socket.emit('getAgl')
 
+    });
+const modelButtons = document.querySelectorAll('.model-button');
+
+    // Lặp qua từng nút và thêm trình lắng nghe sự kiện
+    modelButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const modelName = button.value; // Lấy giá trị từ thuộc tính 'value' của nút
+            console.log(`Sending reloadModel event for: ${modelName}`);
+            socket.emit('reloadModel', modelName); // Gửi sự kiện 'reloadModel' với tên mô hình
+            
+            // Cập nhật trạng thái tạm thời trên UI
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.textContent = `Đang yêu cầu tải lại mô hình: ${modelName}...`;
+        });
+    });
     socket.on("agl", (results) => {
       console.log("📩 Nhận dữ liệu từ server:", results);
       chartsContainer.innerHTML = "";  // Clear cũ
