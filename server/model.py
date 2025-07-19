@@ -6,7 +6,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 # from sklearn.linear_model import LogisticRegression
 from env import make_data, handle_progress
-from drawtable import draw_table
 def isPass(data, label, x_pred):
     model = RandomForestClassifier()
     model.fit(data, label)
@@ -119,7 +118,3 @@ def check(result):
         model.check(result)
 
 
-table_data = []
-for idx, (name, model) in enumerate(classifiers.items()):
-    table_data.append(model.to_dict())
-draw_table(table_data)
