@@ -11,6 +11,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả ngu�
 def handle_message(msg):
     prd, value = my_predict(msg)
     emit('server_message', {"predict": prd, "value":value})
+    print()
 
 @socketio.on('connect')
 def handle_connect():

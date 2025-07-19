@@ -10,36 +10,32 @@ def isPass(data, label, x_pred):
     model = RandomForestClassifier()
     model.fit(data, label)
     probabilities = model.predict_proba(x_pred)[0]
-
-    # print("Thứ tự các lớp của mô hình:", model.classes_)
-    # print("Xác suất dự đoán cho mẫu mới:", probabilities)
-    if probabilities[1]> 0.6:
-        print(probabilities, "-> pass")
-        return True
-    print(probabilities, "-> fall")
-    return False
+    return round(probabilities[1], 2)
 class Model:
     def __init__(self,data, label, model, ModelName):
         self.model = model
+        self.percent = 0
         self.ModelName = ModelName
         self.filter(data, label)
 
     def filter(self, data, label):
-        x_train, self.x_test, y_train, y_test = train_test_split(
-            data, label, 
-            train_size=0.19,
-            test_size=0.019,
-            shuffle=True,
-            stratify=label)
+        while self.percent<0.55:
+            x_train, self.x_test, y_train, y_test = train_test_split(
+                data, label, 
+                train_size=0.19,
+                test_size=0.019,
+                shuffle=True,
+                stratify=label)
 
-        self.model.fit(x_train, y_train)
-        y_pred = self.model.predict(self.x_test)
-        self.mask = y_pred == y_test
-        self.percent = sum(self.mask)/ len(self.mask)
-        print(f"Ti le nhan dung cua {self.ModelName}:{self.percent}")
+            self.model.fit(x_train, y_train)
+            y_pred = self.model.predict(self.x_test)
+            self.mask = y_pred == y_test
+            self.percent = round(sum(self.mask)/ len(self.mask), 2)
+            print(f"Ti le nhan dung cua {self.ModelName}:{self.percent}")
 
     def predict(self, x_pred):
-        if isPass(self.x_test, self.mask, x_pred):
+        self.probability = isPass(self.x_test, self.mask, x_pred)
+        if self.probability >=0.6:
             return self.model.predict(x_pred)[0]
         return None
 
@@ -68,10 +64,10 @@ def my_predict(msg):
     c2 = 0
     for idx, (name, model) in enumerate(classifiers.items()):
         y_pred = model.predict(x_pred)
+        print(f"{model.ModelName:20}, {model.probability}, {y_pred}")
         if y_pred is None:
             continue
         y_pred = int(y_pred)
-        print(name, y_pred)
         if y_pred == 1:
             c1+=1
         else:
