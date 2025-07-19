@@ -12,14 +12,16 @@ def handle_message(msg):
     prd, value = my_predict(msg)
     emit('server_message', {"predict": prd, "value":value})
     print()
-
 @socketio.on('connect')
 def handle_connect():
     print('✅ Client connected')
+@socketio.on('check')
+def handle_check(msg):
+    check(msg)
 
-@socketio.on('reloadModel')
-def handle_reloadModel(modelName):
-    reloadModel(modelName)
+@socketio.on('sid')
+def handle_sid(msg):
+    sid = msg
 @socketio.on('disconnect')
 def handle_disconnect():
     print('❌ Client disconnected')
