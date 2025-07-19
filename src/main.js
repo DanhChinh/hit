@@ -1,9 +1,10 @@
 
 
 function sendMessageToGame(b, sid, eid) {
-  if (!b || !sid || !eid || !isPlay) {
+  if (!b || !sid || !eid || !isPlay ) {
     return 0;
   }
+
   let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
   addMessage(`${b} ->${eid}`, "player")
 
@@ -88,7 +89,6 @@ function socket_connect() {
         if (record.progress.length === 35) {
           // [prd, value] = await predict(JSON.parse(JSON.stringify(record.progress)));
           let msg = JSON.stringify(record.progress)
-          console.log(msg)
           socket_io.emit("xulydulieu", msg);
         }
         return;
@@ -155,14 +155,10 @@ function socket_connect() {
   return socket;
 }
 
-var is_true = 0;
-var is_false = 0;
+
 var prd = undefined;
 var value = 0;
 function checkPrd(prd, rs, value) {
-  // if (prd === undefined || value === 0) {
-  //   return;
-  // }
   let reward = value;
   if (prd != rs) {
     reward *= -1

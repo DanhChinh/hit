@@ -5,11 +5,14 @@ var accessToken = "";
 var isReverse = false;
 var accessTokenStorege = localStorage.getItem("accessToken");
 DOM_accessToken.value = accessTokenStorege;
+
+
 DOM_isPlay.onclick = (e) => {
   isPlay = !isPlay;
   e.target.textContent = isPlay ? "Playing..." : "play";
   e.target.style.backgroundColor = isPlay ? "green" : "red";
 };
+
 
 DOM_isConnectGame.onclick = (e) => {
   if (DOM_accessToken.value) {

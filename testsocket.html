@@ -13,7 +13,7 @@
 
   <div id="status" style="margin-top: 20px;"></div>
 
-  <script>
+  <!-- <script>
     let socket_io = undefined;
 
     const connectBtn = document.getElementById("connectBtn");
@@ -32,7 +32,6 @@
       });
 
       socket_io.on("server_message", (msg) => {
-        console.log("📩 Server gửi:", msg);
         statusDiv.innerHTML += `<p>📩 Tin nhắn từ server: ${JSON.stringify(msg)}</p>`;
       });
 
@@ -51,9 +50,16 @@
         data = JSON.stringify(data)
         
         socket_io.emit("xulydulieu", data);
-        console.log(data);
       }
     };
+  </script> -->
+
+  <script>
+    $.get(ROOT_PATH + '/data/asset/data/stock-DJI.json', function (rawData) {
+      console.log(rawData)
+      var data = splitData(rawData);
+      console.log(data)
+    })
   </script>
 </body>
 </html>

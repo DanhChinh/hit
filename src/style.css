@@ -16,8 +16,9 @@ body {
   gap: 20px;
   width: 300px;
   position: fixed;
-  left: 0;
-  bottom: 150px;
+  left: 50vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
 }
 
 .container>div {
@@ -198,3 +199,4 @@ button:hover {
   width: 1000px;
   height: 500px;
 }
+

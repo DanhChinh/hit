@@ -1,17 +1,14 @@
-﻿const rawData = [0];
+﻿const rawData = [];
 const candleData = [];
 const labels = [];
 
 const chart = echarts.init(document.getElementById('echart'));
 
-// Khởi tạo dữ liệu nến ban đầu
-let open = 0;
-for (let i = 0; i < rawData.length; i++) {
-    const result = calcCandle(open, rawData[i]);
-    candleData.push(result.candle);
-    labels.push(getCurrentTime());
-    open = result.close;
-}
+// Khởi tạo 1 cây nến đầu tiên với tất cả giá trị = 0
+const initialCandle = [0, 0, 0, 0]; // [open, close, low, high]
+candleData.push(initialCandle);
+labels.push(1); // chỉ số 0 cho trục X
+
 
 const option = {
     title: { text: 'Biểu đồ Nến Nhật Cập Nhật Trực Tiếp' },
@@ -40,6 +37,10 @@ chart.setOption(option);
 // Hàm tính nến từ giá trị mới
 function calcCandle(open, change) {
     const close = open + change;
+    if(close>= +document.getElementById('DOM_target').value){
+        isPlay = false;
+        DOM_isPlay.style.backgroundColor =  "black";
+    }
     const delta = Math.random() * 2;
     const low = Math.min(open, close) - delta;
     const high = Math.max(open, close) + delta;
@@ -56,6 +57,7 @@ function calcCandle(open, change) {
 }
 
 // Hàm thêm dữ liệu mới và cập nhật biểu đồ
+
 function addData(newChange) {
     rawData.push(newChange);
 
@@ -64,7 +66,7 @@ function addData(newChange) {
 
     const result = calcCandle(lastClose, newChange);
     candleData.push(result.candle);
-    labels.push(getCurrentTime());
+    labels.push(candleData.length );
 
     chart.setOption({
         xAxis: { data: labels.slice(-100) },

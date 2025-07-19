@@ -24,12 +24,11 @@
       <input id="DOM_accessToken" type="text" value="" />
     </div>
     <div>
-      <span>Model</span>
-      <input id="DOM_model" type="text" value="" disabled />
+      <span>Target</span>
+      <input id="DOM_target" type="text" value="20" />
     </div>
     <button id="DOM_isPlay">Play</button>
     <button id="DOM_isConnectGame">Connect</button>
-    <button id="DOM_loadModel">Load Model</button>
     <button id="DOM_connectPyserver">Connect Pyserver</button>
     <button id="DOM_reverse">Reverse</button>
 
@@ -49,8 +48,6 @@
   <button class="togle" id="hide_mess" >
     togle mess
   </button>
-  <script src="./model/handleProgress.js"> </script>
-  <script src="./src/tensor.js"></script>
   <script>
     function handleTogle(element = form_controll){
       
