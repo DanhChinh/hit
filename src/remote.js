@@ -51,70 +51,61 @@ DOM_connectPyserver.onclick = (e) => {
   socket_io.on("server_message", (msg) => {
     console.log("📩 Server: " + JSON.stringify(msg));
     prd = msg.predict
-    if(isReverse){
-      prd = prd == 1? 2: 1;
-    }
     value = msg.value
-    sendMessageToGame(slider.value * value, record.sid, prd);
+    if(prd && value){
+      DOM_choice.innerText = prd;
+      DOM_value.innerText = value;
+      if(isReverse){
+        prd = prd == 1? 2: 1;
+      }
+      sendMessageToGame(slider.value * value, record.sid, prd);
+    }
+
+    const tableData = msg.table; // hoặc data.value nếu bạn gửi cái đó
+    if (Array.isArray(tableData)) {
+      renderTable(tableData);
+    }
 });
-socket_io.on("train_map", (results) => {
-  console.log("📩 Nhận dữ liệu từ server:", results);
-  const chartsContainer = document.getElementById("echart");
-  chartsContainer.innerHTML = ""; // clear cũ
-
-  Object.entries(results).forEach(([modelName, data]) => {
-    const scatterId = `scatter-${modelName}`;
-    const cumsumId = `cumsum-${modelName}`;
-
-    // Tạo 2 khung
-    chartsContainer.innerHTML += `
-      <div class="chart-box" id="${scatterId}"></div>
-      <div class="chart-box" id="${cumsumId}"></div>
-    `;
-
-    // ---------------- Scatter ----------------
-    const scatterChart = echarts.init(document.getElementById(scatterId));
-    const scatterOption = {
-      title: { text: `${modelName} - Scatter (Acc: ${data.accuracy}%)` },
-      xAxis: { name: "Dim 1" },
-      yAxis: { name: "Dim 2" },
-      tooltip: {
-        formatter: (p) => `Pred: ${p.data[2]}<br>True: ${p.data[3]}`
-      },
-      series: [{
-        symbolSize: 8,
-        data: data.scatter.map(p => [p.x, p.y, p.pred, p.true]),
-        type: 'scatter',
-        encode: { tooltip: [2, 3] },
-        itemStyle: {
-          color: (params) => {
-            return params.data[2] === params.data[3] ? 'green' : 'red';
-          }
-        }
-      }]
-    };
-    scatterChart.setOption(scatterOption);
-
-    // ---------------- Cumulative ----------------
-    const cumsumChart = echarts.init(document.getElementById(cumsumId));
-    const cumsumOption = {
-      title: { text: `${modelName} - Cộng dồn đúng/sai` },
-      xAxis: { type: 'category', name: "Mẫu" },
-      yAxis: { type: 'value', name: "Tổng điểm" },
-      tooltip: { trigger: 'axis' },
-      series: [{
-        data: data.cumsum,
-        type: 'line',
-        smooth: true,
-        lineStyle: { color: 'blue' },
-        markLine: {
-          data: [{ yAxis: 0 }],
-          lineStyle: { type: 'dashed', color: 'gray' }
-        }
-      }]
-    };
-    cumsumChart.setOption(cumsumOption);
-  });
-});
-
 };
+
+
+
+
+function renderTable(data) {
+  const container = document.getElementById("table-container");
+  if (!data.length) {
+    container.innerHTML = "<p>Không có dữ liệu</p>";
+    return;
+  }
+
+  const headers = Object.keys(data[0]);
+  let html = "<table border='1' cellpadding='5'><thead><tr>";
+  headers.forEach(key => {
+    html += `<th>${key}</th>`;
+  });
+  html += "</tr></thead><tbody>";
+
+  data.forEach(row => {
+    if(row['score']==0){
+      html += `<tr class="None">`;
+
+    }else{
+      html += "<tr>";
+
+    }
+    headers.forEach(key => {
+      let val = row[key];
+      if (Array.isArray(val) || typeof val === "object") {
+        val = JSON.stringify(val);
+      }
+      if(val == 'None'){
+        val='';
+      }
+      html += `<td>${val}</td>`;
+    });
+    html += "</tr>";
+  });
+
+  html += "</tbody></table>";
+  container.innerHTML = html;
+}

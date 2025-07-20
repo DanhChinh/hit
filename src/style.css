@@ -200,3 +200,43 @@ button:hover {
   height: 500px;
 }
 
+#table-container{
+  margin: 150px;
+}
+table {
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-width: 400px;
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+table thead tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+table th,table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #dddddd;
+}
+table tbody tr {
+  background-color: #f3f3f3;
+}
+table tbody tr:nth-child(even) {
+  background-color: #e9f5f3;
+}
+table tbody tr:hover {
+  background-color: #d1f0e7;
+}
+table tbody tr.active-row {
+  font-weight: bold;
+  color: #009879;
+}
+.None{
+  opacity: 0.5;
+}

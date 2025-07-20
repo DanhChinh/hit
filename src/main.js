@@ -88,9 +88,10 @@ function socket_connect() {
 
         if (record.progress.length === 35) {
           // [prd, value] = await predict(JSON.parse(JSON.stringify(record.progress)));
-          let msg = JSON.stringify(record.progress)
-          socket_io.emit("sid", record.sid)
-          socket_io.emit("xulydulieu", msg);
+          socket_io.emit("xulydulieu",{
+            'sid':record.sid ||1,
+            'progress':JSON.stringify(record.progress)
+          });
         }
         return;
       }
@@ -106,8 +107,10 @@ function socket_connect() {
         addMessage(`${rs}`, "server")
         rs = rs > 10 ? 1 : 2;
         checkPrd(prd, rs, value);
-        socket_io.emit("sid", record.sid)
-        socket_io.emit("check", rs)
+        socket_io.emit("kiemtradulieu", {
+          'sid':record.sid ||1,
+          'rs':rs==1?1:0
+        })
         return;
       }
       //start
