@@ -7,17 +7,25 @@ from sklearn.ensemble import RandomForestClassifier
 from env import make_data, handle_progress
 import json
 
+
+#self.probability <= 0.4 && label_percent <=0.45
 def isPass(data, label, x_pred):
     model = RandomForestClassifier()
     model.fit(data, label)
     probabilities = model.predict_proba(x_pred)[0]
     return round(probabilities[1], 2)
 
+
+def getScore(probability, percent):
+    p1 = 50* abs(probability-0.5)
+    p2 = 50* max(0.1, abs(percent-0.5))
+    return p1+p2
+
 class Model:
     def __init__(self, data, label, model, model_name):
         self.model = model
         self.model_name = model_name
-        self.label_percent = 0
+        self.label_percent = 1
         self.filter(data, label)
         self.sid = 1
         self.predict = None
@@ -26,7 +34,7 @@ class Model:
         self.hs = []
         self.score = 0
     def filter(self, data, label):
-        while self.label_percent < 0.55:
+        while self.label_percent > 0.45:
             x_train, self.x_test, y_train, y_test = train_test_split(
                 data, label,
                 train_size=0.19,
@@ -43,10 +51,10 @@ class Model:
     def make_predict(self, sid, x_pred):
         self.sid = sid
         self.probability = isPass(self.x_test, self.mask, x_pred)
-        if self.probability >= 0.6:
+        if self.probability <= 0.4:
             self.predict = self.model.predict(x_pred)[0]
             percent = min(10, len(self.hs))/10 *self.percent
-            self.score = int((self.probability * max(percent, 0.1))*100)
+            self.score = getScore(self.probability, percent)
         else:
             self.predict = None
             self.score = 0
