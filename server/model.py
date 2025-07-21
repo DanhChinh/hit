@@ -7,34 +7,27 @@ from sklearn.ensemble import RandomForestClassifier
 from env import make_data, handle_progress
 import json
 
-
-#self.probability <= 0.4 && label_percent <=0.45
-def isPass(data, label, x_pred):
-    model = RandomForestClassifier()
-    model.fit(data, label)
-    probabilities = model.predict_proba(x_pred)[0]
-    return round(probabilities[1], 2)
-
-
-def getScore(probability, percent):
-    p1 = 50* abs(probability-0.5)
-    p2 = 50* max(0.1, abs(percent-0.5))
-    return p1+p2
-
+def getScore(percent):
+    if percent== 0 or percent==1 :
+        return 0
+    return int(percent*100)-50
 class Model:
-    def __init__(self, data, label, model, model_name):
+    def __init__(self, model, model_name):
         self.model = model
         self.model_name = model_name
-        self.label_percent = 1
-        self.filter(data, label)
-        self.sid = 1
+        self.profit = 0
+        self.reset()
+    def reset(self):
+        self.balance = 0
+        self.sid = 0
         self.predict = None
-        self.probability = 0
+        self.predict_fix = None
         self.percent = 0
-        self.hs = []
+        self.isTrue = 0
+        self.isFalse = 0
         self.score = 0
-    def filter(self, data, label):
-        while self.label_percent > 0.45:
+        self.state = "waitting"
+        while self.balance > 0.53 or self.balance< 0.47:
             x_train, self.x_test, y_train, y_test = train_test_split(
                 data, label,
                 train_size=0.19,
@@ -45,41 +38,52 @@ class Model:
             self.model.fit(x_train, y_train)
             y_pred = self.model.predict(self.x_test)
             self.mask = y_pred == y_test
-            self.label_percent = round(sum(self.mask) / len(self.mask), 2)
-            print(f"Tỉ lệ nhận đúng của {self.model_name}: {self.label_percent}")
+            self.balance = round(sum(self.mask) / len(self.mask), 2)
+        print("Khoi tao:", self.model_name)
 
     def make_predict(self, sid, x_pred):
         self.sid = sid
-        self.probability = isPass(self.x_test, self.mask, x_pred)
-        if self.probability <= 0.4:
-            self.predict = self.model.predict(x_pred)[0]
-            percent = min(10, len(self.hs))/10 *self.percent
-            self.score = getScore(self.probability, percent)
+        self.state = "B3TTING"
+        self.predict = int(self.model.predict(x_pred)[0])
+        self.score = getScore(self.percent) # -49 -> 49
+        if self.score>0:
+            self.predict_fix = int(not self.predict)
         else:
-            self.predict = None
-            self.score = 0
-        return self.predict
+            self.predict_fix = self.predict
+            self.score = abs(self.score)
 
     def check(self, result, sid):
         if self.sid is None or self.sid != sid:
-            self.sid = "error"
+            self.state = "ERR"
             return
-        if self.predict is None:
-            self.sid = " "
-            return
-        self.hs.append(1 if self.predict == result else 0)
-        self.percent = round(sum(self.hs) / len(self.hs), 2)
-        self.sid = "done"
+        self.state = "UPDATE"
 
+        if self.predict == result:
+            self.isTrue+=1
+        else:
+            self.isFalse+=1
+        if self.predict_fix == result:
+            self.profit += self.score
+        else:
+            self.profit -= self.score
+
+        self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
+        self.predict = ''
+        self.predict_fix = ''
+        if self.percent==0.5 and (self.isTrue+self.isFalse)>=10:
+            self.reset()
     def to_dict(self):
         return {
             "sid": self.sid,
-            "name": f"{self.model_name} {self.label_percent}",
-            "probability": float(self.probability),
-            "predict": str(self.predict),
+            "state":self.state,
+            "name": f"{self.model_name} {self.balance}",
+            "true": self.isTrue,
+            "false": self.isFalse,
             "percent": float(self.percent),
-            'score':int(self.score),
-            "hs": len(self.hs)
+            "predict": str(self.predict),
+            "predict_fix": str(self.predict_fix),
+            'score':self.score,
+            'profit':self.profit
         }
 
 
@@ -89,7 +93,7 @@ scaler, data, label = make_data()
 # Tạo các mô hình
 classifiers = {}
 for i in range(10):
-    classifiers[f"RandomForest_{i}"] = Model(data, label, RandomForestClassifier(), f"RF_{i}")
+    classifiers[f"RandomForest_{i}"] = Model( RandomForestClassifier(), f"RF_{i}")
 
 
 
@@ -103,16 +107,13 @@ def my_predict(sid, progress):
     c2 = 0
     table = []
     for idx, (name, model) in enumerate(classifiers.items()):
-        y_pred = model.make_predict(sid, x_pred)
+        model.make_predict(sid, x_pred)
         table.append(model.to_dict())
-        print(f"{model.sid} {model.model_name:15} {model.probability:.2f} {model.percent:.2f} {'' if y_pred is None else y_pred}")
-        if y_pred is None:
-            continue
-        y_pred = int(y_pred)
-        if y_pred == 1:
-            c1 += model.score 
+        if model.predict_fix == 1:
+            c1+=model.score
         else:
-            c2 += model.score
+            c2+=model.score
+
     return (1, c1 - c2, table) if c1 > c2 else (2, c2 - c1, table)
 
 def check(sid, result):
@@ -121,3 +122,8 @@ def check(sid, result):
         model.check(result, sid)
         table.append(model.to_dict())
     return table
+
+
+
+
+#reset persent
