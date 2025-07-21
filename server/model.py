@@ -30,8 +30,8 @@ class Model:
         while self.balance > 0.53 or self.balance< 0.47:
             x_train, self.x_test, y_train, y_test = train_test_split(
                 data, label,
-                train_size=0.19,
-                test_size=0.019,
+                train_size=0.5,
+                test_size=0.05,
                 shuffle=True,
                 stratify=label
             )
@@ -66,12 +66,13 @@ class Model:
             self.profit += self.score
         else:
             self.profit -= self.score
-
+        if abs(self.isTrue - self.isFalse)>5 and (self.isTrue+self.isFalse)>=10:
+            self.reset()
         self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
-        self.predict = ''
-        self.predict_fix = ''
         if self.percent==0.5 and (self.isTrue+self.isFalse)>=10:
             self.reset()
+        self.predict = ''
+        self.predict_fix = ''
     def to_dict(self):
         return {
             "sid": self.sid,
