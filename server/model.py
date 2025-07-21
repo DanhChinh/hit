@@ -68,6 +68,7 @@ class Model:
             self.profit -= self.score
         if abs(self.isTrue - self.isFalse)>5 and (self.isTrue+self.isFalse)>=10:
             self.reset()
+            return
         self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
         if self.percent==0.5 and (self.isTrue+self.isFalse)>=10:
             self.reset()
