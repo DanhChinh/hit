@@ -49,7 +49,7 @@ DOM_connectPyserver.onclick = (e) => {
     e.target.style.backgroundColor = "green" ;
   });
   socket_io.on("server_message", (msg) => {
-    console.log("📩 Server: " + JSON.stringify(msg));
+    // console.log("📩 Server: " + JSON.stringify(msg));
     prd = msg.predict
     value = msg.value
     if(prd && value){

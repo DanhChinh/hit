@@ -64,7 +64,7 @@ const modelButtons = document.querySelectorAll('.model-button');
         });
     });
     socket.on("agl", (results) => {
-      console.log("📩 Nhận dữ liệu từ server:", results);
+      // console.log("📩 Nhận dữ liệu từ server:", results);
       chartsContainer.innerHTML = "";  // Clear cũ
 
       // Bước 1: Tạo DOM trước

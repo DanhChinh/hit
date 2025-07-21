@@ -63,14 +63,15 @@ function addData(newChange) {
 
     const lastCandle = candleData[candleData.length - 1];
     const lastClose = parseFloat(lastCandle[1]); // lấy close của nến cuối
+    console.log("lastClose", lastClose)
 
-    const result = calcCandle(lastClose, newChange);
+    const result = calcCandle(+lastClose, newChange);
     candleData.push(result.candle);
     labels.push(candleData.length );
 
     chart.setOption({
-        xAxis: { data: labels.slice(-200) },
-        series: [{ data: candleData.slice(-200) }]
+        xAxis: { data: labels },
+        series: [{ data: candleData }]
     });
 }
 function getCurrentTime() {
