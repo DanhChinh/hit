@@ -102,6 +102,10 @@
 
     hide_form.onclick = ()=>handleTogle();
     hide_mess.onclick = ()=>handleTogle(document.getElementById('chat-container'))
+
+    setInterval(()=>{
+      document.getElementById('chat-messages').innerHTML = '';
+    },600000)
   </script>
   <script src="./src/echart.js"></script>
   <script src="./src/main.js"></script>

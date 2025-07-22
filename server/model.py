@@ -27,11 +27,11 @@ class Model:
         self.isFalse = 0
         self.score = 0
         self.state = "waitting"
-        while self.balance > 0.53 or self.balance< 0.47:
+        while self.balance > 0.51 or self.balance< 0.49:
             x_train, self.x_test, y_train, y_test = train_test_split(
                 data, label,
                 train_size=0.5,
-                test_size=0.05,
+                test_size=0.1,
                 shuffle=True,
                 stratify=label
             )
@@ -66,9 +66,9 @@ class Model:
             self.profit += self.score
         else:
             self.profit -= self.score
-        if abs(self.isTrue - self.isFalse)>5 and (self.isTrue+self.isFalse)>=10:
-            self.reset()
-            return
+        # if abs(self.isTrue - self.isFalse)>5 and (self.isTrue+self.isFalse)>=10:
+        #     self.reset()
+        #     return
         self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
         if self.percent==0.5 and (self.isTrue+self.isFalse)>=10:
             self.reset()
@@ -94,8 +94,9 @@ scaler, data, label = make_data()
 
 # Tạo các mô hình
 classifiers = {}
-for i in range(10):
+for i in range(5):
     classifiers[f"RandomForest_{i}"] = Model( RandomForestClassifier(), f"RF_{i}")
+    classifiers[f"KNeighborsClassifier_{i}"] = Model( KNeighborsClassifier(), f"KN_{i}")
 
 
 
