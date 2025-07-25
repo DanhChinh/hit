@@ -19,8 +19,10 @@ class Model:
         self.model = model
         self.model_name = model_name
         self.profit = 0
+        self.profits = []
         self.reset()
     def reset(self):
+        self.profit = 0
         self.balance = 0
         self.sid = 0
         self.predict = None
@@ -69,11 +71,13 @@ class Model:
             self.profit += self.score
         else:
             self.profit -= self.score
-        # if abs(self.isTrue - self.isFalse)>5 and (self.isTrue+self.isFalse)>=10:
-        #     self.reset()
-        #     return
+            if self.profit <-100:
+                self.profits.append(self.profit)
+                self.reset()
+                return
         self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
         if self.percent==0.5 and (self.isTrue+self.isFalse)>=16:
+            self.profits.append(self.profit)
             self.reset()
         self.predict = ''
         self.predict_fix = ''
@@ -85,10 +89,10 @@ class Model:
             "true": self.isTrue,
             "false": self.isFalse,
             "percent": float(self.percent),
-            "predict": str(self.predict),
-            "predict_fix": str(self.predict_fix),
+            "predict": f"{self.predict}->{self.predict_fix}",
             'score':self.score,
-            'profit':self.profit
+            'profit':self.profit,
+            'profits': self.profits
         }
 
 
