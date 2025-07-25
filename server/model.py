@@ -1,12 +1,15 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
 from env import make_data, handle_progress
 import json
-
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neural_network import MLPClassifier
 def getScore(percent):
     if percent== 0 or percent==1 :
         return 0
@@ -31,9 +34,9 @@ class Model:
             x_train, self.x_test, y_train, y_test = train_test_split(
                 data, label,
                 train_size=0.5,
-                test_size=0.1,
-                shuffle=True,
-                stratify=label
+                test_size=0.1#,
+                #shuffle=True,
+                # stratify=label
             )
             self.model.fit(x_train, y_train)
             y_pred = self.model.predict(self.x_test)
@@ -70,7 +73,7 @@ class Model:
         #     self.reset()
         #     return
         self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
-        if self.percent==0.5 and (self.isTrue+self.isFalse)>=10:
+        if self.percent==0.5 and (self.isTrue+self.isFalse)>=16:
             self.reset()
         self.predict = ''
         self.predict_fix = ''
@@ -93,10 +96,20 @@ class Model:
 scaler, data, label = make_data()
 
 # Tạo các mô hình
+
+
 classifiers = {}
-for i in range(5):
-    classifiers[f"RandomForest_{i}"] = Model( RandomForestClassifier(), f"RF_{i}")
-    classifiers[f"KNeighborsClassifier_{i}"] = Model( KNeighborsClassifier(), f"KN_{i}")
+for i in range(1):  # giới hạn lại số lượng bản sao để tránh overfitting
+    classifiers[f"RandomForest_{i}"] = Model(RandomForestClassifier(n_estimators=100, max_depth=5, random_state=i), f"RF_{i}")
+    classifiers[f"KNN_{i}"] = Model(KNeighborsClassifier(n_neighbors=5), f"KN_{i}")
+    classifiers[f"LogReg_{i}"] = Model(LogisticRegression(max_iter=1000), f"LR_{i}")
+    classifiers[f"SVC_{i}"] = Model(SVC(probability=True, kernel='rbf'), f"SVC_{i}")
+    classifiers[f"DT_{i}"] = Model(DecisionTreeClassifier(max_depth=5, random_state=i), f"DT_{i}")
+    classifiers[f"GNB_{i}"] = Model(GaussianNB(), f"GNB_{i}")
+    classifiers[f"MLP_{i}"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500, random_state=i), f"MLP_{i}")
+    classifiers[f"GB_{i}"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3, random_state=i), f"GB_{i}")
+    classifiers[f"Ada_{i}"] = Model(AdaBoostClassifier(n_estimators=50, random_state=i), f"Ada_{i}")
+
 
 
 
