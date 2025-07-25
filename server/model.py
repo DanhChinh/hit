@@ -22,6 +22,7 @@ class Model:
         self.profits = []
         self.reset()
     def reset(self):
+        self.isSelect = False
         self.profit = 0
         self.balance = 0
         self.sid = 0
@@ -71,14 +72,14 @@ class Model:
             self.profit += self.score
         else:
             self.profit -= self.score
-            if self.profit <-100:
-                self.profits.append(self.profit)
-                self.reset()
-                return
+            # if self.profit <-100:
+            #     self.profits.append(self.profit)
+            #     self.reset()
+            #     return
         self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
-        if self.percent==0.5 and (self.isTrue+self.isFalse)>=16:
-            self.profits.append(self.profit)
-            self.reset()
+        # if self.percent==0.5 and (self.isTrue+self.isFalse)>=16:
+        #     self.profits.append(self.profit)
+        #     self.reset()
         self.predict = ''
         self.predict_fix = ''
     def to_dict(self):
@@ -103,7 +104,7 @@ scaler, data, label = make_data()
 
 
 classifiers = {}
-for i in range(1):  # giới hạn lại số lượng bản sao để tránh overfitting
+for i in range(10):  # giới hạn lại số lượng bản sao để tránh overfitting
     classifiers[f"RandomForest_{i}"] = Model(RandomForestClassifier(n_estimators=100, max_depth=5, random_state=i), f"RF_{i}")
     classifiers[f"KNN_{i}"] = Model(KNeighborsClassifier(n_neighbors=5), f"KN_{i}")
     classifiers[f"LogReg_{i}"] = Model(LogisticRegression(max_iter=1000), f"LR_{i}")
@@ -115,7 +116,10 @@ for i in range(1):  # giới hạn lại số lượng bản sao để tránh ov
     classifiers[f"Ada_{i}"] = Model(AdaBoostClassifier(n_estimators=50, random_state=i), f"Ada_{i}")
 
 
-
+def sort_by_profit(classifiers):
+    # Sắp xếp các đối tượng trong classifiers theo profit giảm dần
+    sorted_classifiers = sorted(classifiers.values(), key=lambda x: x.profit, reverse=True)
+    return sorted_classifiers
 
 
 def my_predict(sid, progress):
@@ -127,6 +131,16 @@ def my_predict(sid, progress):
     c2 = 0
     table = []
     for idx, (name, model) in enumerate(classifiers.items()):
+        model.make_predict(sid, x_pred)
+
+    sorted_classifiers = sort_by_profit(classifiers)
+
+    count=0
+    for model in sorted_classifiers:
+    # for idx, (name, model) in enumerate(classifiers.items()):
+        count+=1
+        if count == 10:
+            break
         model.make_predict(sid, x_pred)
         table.append(model.to_dict())
         if model.predict_fix == 1:
