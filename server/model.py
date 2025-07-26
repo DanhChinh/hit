@@ -24,7 +24,6 @@ class Model:
         self.profits = []
         self.reset()
     def reset(self):
-        self.isSelect = False
         self.profit = 1
         self.balance = 0
         self.sid = 0
@@ -77,10 +76,12 @@ class Model:
         else:
             self.profit -= self.score
         self.percent = self.isTrue/(self.isFalse+self.isTrue)
-        self.predict = ''
-        self.predict_fix = ''
-        self.score = 0
+        self.predict = None
+        self.predict_fix = None
     def to_dict(self):
+        predict = ''
+        if self.predict != None:
+            predict = f"{self.predict}->{self.predict_fix}"
         return {
             "id": self.id,
             "state":self.state,
@@ -88,10 +89,9 @@ class Model:
             "true": self.isTrue,
             "false": self.isFalse,
             "percent": float(self.percent),
-            "predict": f"{self.predict}->{self.predict_fix}",
+            "predict": predict,
             'score':self.score,
-            'profit':self.profit,
-            'isSelect': self.isSelect
+            'profit':self.profit
         }
 
 
@@ -134,11 +134,6 @@ def my_predict(sid, progress):
 
     for idx, (name, model) in enumerate(classifiers.items()):
         model.make_predict(sid, x_pred)
-        if model.score==0 or model.profit<=0:
-            model.isSelect = False
-            table.append(model.to_dict())
-            continue
-        model.isSelect = True
         table.append(model.to_dict())
         if model.predict_fix == 1:
             c1+=model.score

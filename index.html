@@ -13,11 +13,10 @@
 
 <body>
   <div id="echart"></div>
-  <!-- <div id="charts_container"></div> -->
   <div id="form_controll" class="container">
     <div>
-      <span id="valueDisplay">100</span>
-      <input id="slider" type="range" min="0" max="5000" value="100" step="100" />
+      <span id="valueDisplay">1</span>
+      <input id="slider" type="range" min="0" max="50000" value="1" step="1000" />
     </div>
     <div>
       <span id="addon-wrapping">Token</span>
@@ -36,10 +35,6 @@
 
   <div id="chat-container">
     <div id="chat-messages"></div>
-    <!-- <div id="chat-input">
-      <input type="text" id="messageInput" placeholder="Nhập tin nhắn...">
-      <button onclick="sendMessage()">Gửi</button>
-    </div> -->
   </div>
 
   <button class="togle" id="hide_form" >
@@ -57,6 +52,14 @@
     <div class="card-row">
       <span class="label">Giá trị:</span>
       <h4 id="DOM_value" class="value">0</h4>
+    </div>
+    <div class="card-row">
+      <span class="label">Hệ số nhân:</span>
+      <h4 id="DOM_multiplier" class="value">1</h4>
+    </div>
+    <div class="card-row">
+      <span class="label">Giá trị cuối:</span>
+      <h4 id="DOM_valueOK" class="value">0</h4>
     </div>
   </div>
   

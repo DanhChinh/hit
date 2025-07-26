@@ -32,6 +32,7 @@ const valueDisplay = document.getElementById("valueDisplay");
 
 slider.addEventListener("input", function () {
   valueDisplay.textContent = slider.value;
+  DOM_multiplier.textContent = slider.value;
 });
 DOM_reverse.onclick = (e) => {
   isReverse = !isReverse;
@@ -58,7 +59,9 @@ DOM_connectPyserver.onclick = (e) => {
       if(isReverse){
         prd = prd == 1? 2: 1;
       }
-      sendMessageToGame(slider.value * value, record.sid, prd);
+      let valueOk = roundToThousand(slider.value * value)
+      document.getElementById('DOM_valueOK').innerText = `${formatCurrency(valueOk)}`
+      sendMessageToGame(valueOk, record.sid, prd);
     }
 
     const tableData = msg.table; // hoặc data.value nếu bạn gửi cái đó
@@ -68,8 +71,14 @@ DOM_connectPyserver.onclick = (e) => {
 });
 };
 
+function formatCurrency(num, locale = 'vi-VN', currency = 'VND') {
+  return num.toLocaleString(locale, { style: 'currency', currency: currency });
+}
 
 
+function roundToThousand(num) {
+  return Math.round(num / 1000) * 1000;
+}
 
 function renderTable(data) {
   const container = document.getElementById("table-container");
@@ -87,7 +96,7 @@ function renderTable(data) {
   data.sort((a, b) => b['profit'] - a['profit']);
 
   data.forEach(row => {
-    if(!row['isSelect']){
+    if(row['score'] === 0){
       html += `<tr class="None">`;
 
     }else{
