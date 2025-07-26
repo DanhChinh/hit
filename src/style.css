@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-  background-color: #ffffff31;
+  background-color:rgb(168, 95, 0);
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -19,6 +19,7 @@ body {
   left: 50vw;
   top: 50vh;
   transform: translate(-50%, -50%);
+  z-index: 999;
 }
 
 .container>div {
@@ -104,6 +105,8 @@ button:hover {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  z-index: 999;
+  background-color: #ccc;
 }
 
 #chat-messages {
@@ -184,11 +187,11 @@ button:hover {
 }
 
 #echart{
-  width: 1000px;
-  height: 500px;
+  width: 80vw;
+  height: 50vh;
   position: fixed;
   top: 10px;
-  left: 10px;
+  left: 10vw;
 }
 
 

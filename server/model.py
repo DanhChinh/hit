@@ -13,17 +13,19 @@ from sklearn.neural_network import MLPClassifier
 def getScore(percent):
     if percent== 0 or percent==1 :
         return 0
-    return int(percent*100)-50
+    return percent-0.5
 class Model:
+    id=0
     def __init__(self, model, model_name):
+        Model.id+=1
+        self.id = Model.id
         self.model = model
         self.model_name = model_name
-        self.profit = 0
         self.profits = []
         self.reset()
     def reset(self):
         self.isSelect = False
-        self.profit = 0
+        self.profit = 1
         self.balance = 0
         self.sid = 0
         self.predict = None
@@ -33,7 +35,7 @@ class Model:
         self.isFalse = 0
         self.score = 0
         self.state = "waitting"
-        while self.balance > 0.51 or self.balance< 0.49:
+        while self.balance<0.1: #self.balance > 0.51 or self.balance< 0.49:
             x_train, self.x_test, y_train, y_test = train_test_split(
                 data, label,
                 train_size=0.5,
@@ -51,7 +53,9 @@ class Model:
         self.sid = sid
         self.state = "B3TTING"
         self.predict = int(self.model.predict(x_pred)[0])
-        self.score = getScore(self.percent) # -49 -> 49
+        l=self.isTrue+self.isFalse
+        t=min(l,10)/10
+        self.score =  getScore(self.percent)*t *self.profit
         if self.score>0:
             self.predict_fix = int(not self.predict)
         else:
@@ -72,19 +76,13 @@ class Model:
             self.profit += self.score
         else:
             self.profit -= self.score
-            # if self.profit <-100:
-            #     self.profits.append(self.profit)
-            #     self.reset()
-            #     return
-        self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
-        # if self.percent==0.5 and (self.isTrue+self.isFalse)>=16:
-        #     self.profits.append(self.profit)
-        #     self.reset()
+        self.percent = self.isTrue/(self.isFalse+self.isTrue)
         self.predict = ''
         self.predict_fix = ''
+        self.score = 0
     def to_dict(self):
         return {
-            "sid": self.sid,
+            "id": self.id,
             "state":self.state,
             "name": f"{self.model_name} {self.balance}",
             "true": self.isTrue,
@@ -93,7 +91,7 @@ class Model:
             "predict": f"{self.predict}->{self.predict_fix}",
             'score':self.score,
             'profit':self.profit,
-            'profits': self.profits
+            'isSelect': self.isSelect
         }
 
 
@@ -133,15 +131,14 @@ def my_predict(sid, progress):
     for idx, (name, model) in enumerate(classifiers.items()):
         model.make_predict(sid, x_pred)
 
-    sorted_classifiers = sort_by_profit(classifiers)
 
-    count=0
-    for model in sorted_classifiers:
-    # for idx, (name, model) in enumerate(classifiers.items()):
-        count+=1
-        if count == 10:
-            break
+    for idx, (name, model) in enumerate(classifiers.items()):
         model.make_predict(sid, x_pred)
+        if model.score==0 or model.profit<=0:
+            model.isSelect = False
+            table.append(model.to_dict())
+            continue
+        model.isSelect = True
         table.append(model.to_dict())
         if model.predict_fix == 1:
             c1+=model.score

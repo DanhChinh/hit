@@ -84,9 +84,10 @@ function renderTable(data) {
     html += `<th>${key}</th>`;
   });
   html += "</tr></thead><tbody>";
+  data.sort((a, b) => b['profit'] - a['profit']);
 
   data.forEach(row => {
-    if(row['score']==0){
+    if(!row['isSelect']){
       html += `<tr class="None">`;
 
     }else{
